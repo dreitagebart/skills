@@ -1,0 +1,29 @@
+{
+  "name": "@dreitagebart/skills",
+  "version": "0.1.0",
+  "description": "Coding-Richtlinien von dreitagebart als Agent Skills (SKILL.md), installierbar mit `npx skills add`.",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "agent-skills",
+    "skills",
+    "claude-code",
+    "coding-guidelines"
+  ],
+  "files": [
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://codeberg.org/dreitagebart/skills.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "validate": "bun scripts/validate-skills.ts"
+  }
+}

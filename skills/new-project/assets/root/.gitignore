@@ -1,0 +1,16 @@
+node_modules/
+.next/
+.turbo/
+dist/
+coverage/
+*.log
+
+# Prisma 7 generated client
+src/generated/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+.DS_Store

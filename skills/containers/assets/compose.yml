@@ -1,0 +1,26 @@
+# PLACEHOLDER: the real compose templates will be supplied by dreitagebart.
+# Rules that always apply: `restart: unless-stopped` and `container_name` on every service.
+services:
+  web:
+    container_name: myproject-web
+    build:
+      context: .
+      dockerfile: Containerfile
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+
+  db:
+    container_name: myproject-db
+    # Choose the PostgreSQL major version deliberately and keep it pinned.
+    image: postgres:17-alpine
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

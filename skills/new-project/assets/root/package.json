@@ -1,0 +1,15 @@
+{
+  "name": "@__PROJECT__/root",
+  "private": true,
+  "packageManager": "bun@__BUN_VERSION__",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  }
+}
