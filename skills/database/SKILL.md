@@ -1,33 +1,33 @@
 ---
 name: database
-description: Prisma ORM 7 mit PostgreSQL - prisma.config.ts, Generator prisma-client mit Pflicht-Output, Driver-Adapter PrismaPg, Client-Singleton, Migrationen mit Bun. Verwenden bei Datenbankschema, Prisma, Migrationen, Seeds, Queries, Modellen und ORM-Fragen - und immer, bevor Prisma-Code aus dem Gedächtnis geschrieben wird, weil sich Prisma 7 grundlegend von Version 6 und älter unterscheidet.
+description: Prisma ORM 7 with PostgreSQL - prisma.config.ts, prisma-client generator with required output, PrismaPg driver adapter, client singleton, and migrations with Bun. Use for database schemas, Prisma, migrations, seeds, queries, models, and ORM questions; always read before writing Prisma code from memory because Prisma 7 differs fundamentally from version 6 and earlier.
 ---
 
-# Datenbank: Prisma 7 und PostgreSQL
+# Database: Prisma 7 and PostgreSQL
 
-Datenbank ist immer PostgreSQL, ORM ist Prisma ORM in Version 7. Prisma 7 hat Setup und Client gegenüber Version 6 und älter umgebaut. Code, der Prisma-6-Wissen voraussetzt, funktioniert nicht. Die vollständigen Dateien stehen in `references/prisma-setup.md`.
+Always use PostgreSQL as the database and Prisma ORM version 7 as the ORM. Prisma 7 changed setup and the client compared with version 6 and earlier. Code based on Prisma 6 knowledge will not work. See the complete files in `references/prisma-setup.md`.
 
-## Was sich in Prisma 7 geändert hat
+## Changes in Prisma 7
 
-1. **Verbindung in `prisma.config.ts`.** Die URL für die CLI steht in der Konfigurationsdatei (`datasource: { url: env('DATABASE_URL') }`), nicht mehr als `url = env(...)` im `datasource`-Block der Schema-Datei.
-2. **Neuer Generator `prisma-client` mit Pflicht-Output.** `provider = "prisma-client"` und ein explizites `output`. Der Client wird aus diesem Ordner importiert, nicht aus `@prisma/client`.
-3. **Driver-Adapter sind Pflicht.** Für PostgreSQL `@prisma/adapter-pg` und `pg`, der Adapter wird an `new PrismaClient({ adapter })` übergeben.
-4. **`.env` wird nicht automatisch geladen.** Bun lädt `.env` selbst, wenn die CLI als `bunx --bun prisma ...` läuft. Ohne `--bun` muss `prisma.config.ts` `import 'dotenv/config'` enthalten.
-5. **`migrate dev` führt `generate` nicht mehr aus.** Nach jeder Schema-Änderung `bunx --bun prisma generate` ausführen, und im Build und bei der Installation ebenfalls.
+1. **Connection in `prisma.config.ts`.** The CLI URL belongs in the config (`datasource: { url: env('DATABASE_URL') }`), no longer as `url = env(...)` in the schema's `datasource` block.
+2. **New `prisma-client` generator with required output.** Set `provider = "prisma-client"` and an explicit `output`. Import the client from that folder, not from `@prisma/client`.
+3. **Driver adapters are required.** For PostgreSQL, install `@prisma/adapter-pg` and `pg`, then pass the adapter to `new PrismaClient({ adapter })`.
+4. **`.env` is not loaded automatically.** Bun loads `.env` when the CLI runs as `bunx --bun prisma ...`. Without `--bun`, `prisma.config.ts` must include `import 'dotenv/config'`.
+5. **`migrate dev` no longer runs `generate`.** After every schema change, run `bunx --bun prisma generate`; also run it during builds and installation.
 
-## Festlegungen für unsere Projekte
+## Project conventions
 
-- Generator-Output: `../src/generated/prisma` (relativ zu `prisma/schema.prisma`). Dadurch funktioniert der Import `~/generated/prisma/client` mit dem Alias. Der Ordner steht in `.gitignore` und wird nie committet.
-- Der Client wird einmal in `src/lib/prisma.ts` erzeugt (Singleton über `globalThis`, damit Hot Reload keine Verbindungen anhäuft) und von dort importiert.
-- Die Datenbank-URL kommt über `src/env.ts` (Zod-validiert), nicht direkt aus `process.env`.
-- Prisma-Code läuft nur auf dem Server. Nie in einer Client-Komponente importieren.
-- In einem Monorepo liegt Prisma in einem eigenen Package (zum Beispiel `@<projekt>/db`), das Apps als Workspace-Abhängigkeit nutzen. Siehe Skill `monorepo`.
-- Modelle sind englisch, im Singular und PascalCase (`Post`), Felder in camelCase.
-- **Offen:** Ob Tabellen- und Spaltennamen in der Datenbank per `@@map`/`@map` auf snake_case gelegt werden, ist nicht entschieden. Beim ersten Schema nachfragen.
+- Generator output: `../src/generated/prisma` (relative to `prisma/schema.prisma`). This makes `~/generated/prisma/client` work with the alias. Add the folder to `.gitignore`; never commit it.
+- Create the client once in `src/lib/prisma.ts` (a singleton using `globalThis` prevents hot reload from accumulating connections) and import it from there.
+- Read the database URL through `src/env.ts` (validated with Zod), never directly from `process.env`.
+- Prisma code runs only on the server. Never import it into a client component.
+- In a monorepo, put Prisma in its own package (for example `@<project>/db`) and use it from apps as a workspace dependency. See `monorepo`.
+- Model names are English, singular, and PascalCase (`Post`); fields use camelCase.
+- **Open decision:** It has not been decided whether database table and column names should map to snake_case with `@@map`/`@map`. Ask when creating the first schema.
 
-## Befehle & `package.json`-Skripte
+## Commands and `package.json` scripts
 
-Beim Einrichten eines Projekts (bzw. des `@<projekt>/db`-Packages im Monorepo) werden immer folgende `db:*`-Skripte in die `package.json` eingetragen (jeweils mit `bunx --bun`, damit `.env` ohne `dotenv` geladen wird):
+When setting up a project (or the `@<project>/db` package in a monorepo), always add these `db:*` scripts to `package.json`. Use `bunx --bun` so `.env` loads without `dotenv`:
 
 ```json
 {
@@ -42,12 +42,12 @@ Beim Einrichten eines Projekts (bzw. des `@<projekt>/db`-Packages im Monorepo) w
 }
 ```
 
-Im Arbeitsalltag werden diese Skripte genutzt (`bun run db:generate`, `bun run db:migrate -- --name init`, `bun run db:push`, `bun run db:studio`, `bun run db:format`).
+Use these scripts in daily work (`bun run db:generate`, `bun run db:migrate -- --name init`, `bun run db:push`, `bun run db:studio`, `bun run db:format`).
 
-Fragt `migrate dev` nach einem Reset der Datenbank, wird abgebrochen und der Nutzer gefragt. Ein Reset löscht Daten.
+If `migrate dev` asks to reset the database, cancel and ask the user. A reset deletes data.
 
-## Zusammenspiel mit anderen Skills
+## Working with other skills
 
-- Auth-Tabellen (User, Session, Account) erzeugt die better-auth-CLI, siehe Skill `auth`. Das Ergebnis danach auf Prisma-7-Konformität prüfen, also Generator- und Datasource-Block.
-- Zugriff aus Procedures läuft über `ctx.db` (Skill `data-fetching`).
-- Im Container wird `prisma generate` in der Build-Stage ausgeführt (Skill `containers`).
+- The better-auth CLI creates auth tables (User, Session, Account); see `auth`. Then check the result for Prisma 7 compatibility, including generator and datasource blocks.
+- Access Prisma from procedures through `ctx.db` (see `data-fetching`).
+- Run `prisma generate` in the container build stage (see `containers`).

@@ -1,28 +1,28 @@
 # AGENTS.md
 
-Dieses Repo enthält Agent Skills (`skills/<name>/SKILL.md`), keine Anwendung. Es gilt für alle, die Skills hier schreiben oder ändern.
+This repository contains Agent Skills (`skills/<name>/SKILL.md`), not an application. These rules apply to everyone who writes or changes skills here.
 
-## Struktur
+## Structure
 
-- `skills/<name>/SKILL.md` ist ein Skill. Der Ordnername ist gleich `name` im Frontmatter (kebab-case).
-- Zusatzmaterial liegt in `references/` (wird bei Bedarf gelesen) und `assets/` (Vorlagen für die Ausgabe).
-- `drafts/` enthält Entwürfe, die nicht installiert werden.
-- `docs/` enthält Dokumentation für Menschen, `ROADMAP.md` die offenen Punkte.
+- `skills/<name>/SKILL.md` is a skill. The folder name must match `name` in the frontmatter (kebab-case).
+- Supporting material lives in `references/` (read when needed) and `assets/` (output templates).
+- `drafts/` contains drafts that are not installed.
+- `docs/` contains documentation for people; `ROADMAP.md` lists open items.
 
-## Regeln für Skills
+## Skill rules
 
-- Frontmatter hat nur `name` und `description`. Die `description` steht in einer Zeile, maximal 1024 Zeichen.
-- Die `description` entscheidet, wann ein Skill geladen wird. Sie nennt, was der Skill tut, und konkrete Auslöser (Stichwörter, Aufgaben). Sie darf deutlich formuliert sein, weil Agenten Skills eher zu selten als zu oft laden.
-- `SKILL.md` bleibt unter 500 Zeilen. Längere Details wandern in `references/`, mit Hinweis in der `SKILL.md`, wann sie zu lesen sind.
-- Verweise auf Dateien eines anderen Skills schreiben als `<skill>/references/<datei>` oder `<skill>/assets/<datei>`.
-- Anweisungen im Imperativ, mit Begründung, wo sie nicht selbsterklärend sind. Verbote immer mit der erlaubten Alternative.
-- Fließtext ist Deutsch. Fachbegriffe, Bezeichner, Code und Code-Kommentare sind Englisch.
-- Code in Skills folgt den eigenen Konventionen (kebab-case-Dateien, `~`-Alias, Named Exports).
+- Frontmatter contains only `name` and `description`. Keep `description` on one line and under 1024 characters.
+- The `description` determines when a skill is loaded. State what the skill does and concrete triggers (keywords, tasks). Be explicit because agents are more likely to load skills too rarely than too often.
+- Keep `SKILL.md` under 500 lines. Move longer details into `references/` and explain in `SKILL.md` when to read them.
+- Refer to files in another skill as `<skill>/references/<file>` or `<skill>/assets/<file>`.
+- Write instructions in the imperative and explain why when it is not self-evident. Pair every prohibition with an allowed alternative.
+- Write prose in English. Technical terms, identifiers, code, and code comments are in English as well.
+- Code in skills follows the project's conventions (kebab-case filenames, `~` alias, named exports).
 
-## Prüfen
+## Validation
 
 ```bash
 bun run validate
 ```
 
-Das Skript prüft Frontmatter, Namen, Größenlimits und Dateiverweise. Es muss vor jedem Commit grün sein.
+The script checks frontmatter, names, size limits, and file references. It must pass before every commit.

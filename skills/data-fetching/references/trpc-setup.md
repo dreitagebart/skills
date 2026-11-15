@@ -1,8 +1,8 @@
-# tRPC-Setup für Next.js App Router
+# tRPC setup for the Next.js App Router
 
-Quelle: tRPC-Dokumentation "Set up with Next.js App Router" (Stand November 2026), angepasst an die Konventionen: `~`-Alias, kebab-case-Dateinamen, Prisma-Client und better-auth-Session im Kontext. Vor dem Einsatz mit der aktuellen Doku abgleichen.
+Source: tRPC documentation "Set up with Next.js App Router" (as of November 2026), adapted to these conventions: `~` alias, kebab-case filenames, Prisma client, and better-auth session in the context. Compare with current documentation before use.
 
-## Inhalt
+## Contents
 
 1. Installation
 2. Dateistruktur
@@ -12,7 +12,7 @@ Quelle: tRPC-Dokumentation "Set up with Next.js App Router" (Stand November 2026
 6. `trpc/query-client.ts`
 7. `trpc/client.tsx`
 8. `trpc/server.tsx`
-9. Provider einhängen
+9. Add the provider
 10. Optional: superjson
 
 ## 1. Installation
@@ -21,7 +21,7 @@ Quelle: tRPC-Dokumentation "Set up with Next.js App Router" (Stand November 2026
 bun add @trpc/server @trpc/client @trpc/tanstack-react-query @tanstack/react-query zod client-only server-only react-error-boundary
 ```
 
-`react-error-boundary` wird für das Suspense-Muster aus dem Skill gebraucht.
+`react-error-boundary` is needed for the Suspense pattern in the skill.
 
 ## 2. Dateistruktur
 
@@ -29,13 +29,13 @@ bun add @trpc/server @trpc/client @trpc/tanstack-react-query @tanstack/react-que
 src/
 ├── app/
 │   └── api/trpc/[trpc]/route.ts
-├── schemas                          # Zod-Schema
+├── schemas                          # Zod schemas
 └── lib/
     └── trpc/
-        ├── init.ts                  # Kontext, Basis-Procedures
-        ├── query-client.ts          # QueryClient-Factory
-        ├── client.tsx               # Provider und useTRPC für Client-Komponenten
-        ├── server.tsx               # prefetch, HydrateClient, caller für Server-Komponenten
+        ├── init.ts                  # context, base procedures
+        ├── query-client.ts          # QueryClient factory
+        ├── client.tsx               # provider and useTRPC for Client Components
+        ├── server.tsx               # prefetch, HydrateClient, caller for Server Components
         └── routers/
             ├── app-router.ts
             └── post.ts
@@ -87,7 +87,7 @@ export const appRouter = createTRPCRouter({
 export type AppRouter = typeof appRouter
 ```
 
-Wächst ein Thema, wandert es in eine eigene Datei `routers/post.ts` und wird im `app-router.ts` eingehängt.
+As a topic grows, move it into its own file, `routers/post.ts`, and register it in `app-router.ts`.
 
 ## 5. `src/app/api/trpc/[trpc]/route.ts`
 
@@ -196,7 +196,7 @@ export const TRPCReactProvider = ({ children }: Props) => {
 }
 ```
 
-`APP_URL` ersetzt `VERCEL_URL` aus der Doku, weil das Deployment selbst gehostet wird. Die Variable muss in `src/env.ts` stehen, falls sie benutzt wird.
+`APP_URL` replaces `VERCEL_URL` from the documentation because deployment is self-hosted. If used, declare the variable in `src/env.ts`.
 
 ## 8. `src/lib/trpc/server.tsx`
 
@@ -246,11 +246,11 @@ export const prefetch = <T extends ReturnType<TRPCQueryOptions<any>>>(queryOptio
 export const caller = appRouter.createCaller(createContext)
 ```
 
-Die `any`-Typen stammen aus der tRPC-Doku, weil `TRPCQueryOptions` generisch über alle Procedures arbeitet. Falls die Biome-Regel `noExplicitAny` greift, die Stelle mit einem `biome-ignore`-Kommentar und kurzer Begründung markieren.
+The `any` types come from the tRPC documentation because `TRPCQueryOptions` is generic across all procedures. If the Biome `noExplicitAny` rule applies, mark the line with a `biome-ignore` comment and a short explanation.
 
-## 9. Provider einhängen
+## 9. Add the provider
 
-In `src/app/layout.tsx` (siehe Skill `react-components`) den `TRPCReactProvider` innerhalb des `MantineProvider` setzen:
+In `src/app/layout.tsx` (see `react-components`), put `TRPCReactProvider` inside `MantineProvider`:
 
 ```tsx
 <MantineProvider>
@@ -260,4 +260,4 @@ In `src/app/layout.tsx` (siehe Skill `react-components`) den `TRPCReactProvider`
 
 ## 10. Optional: superjson
 
-Nötig, wenn Procedures `Date`, `Map`, `Set` oder `BigInt` übertragen. Dann `bun add superjson` und an drei Stellen aktivieren: `transformer: superjson` in `initTRPC...create`, `transformer: superjson` im `httpBatchLink`, sowie `serializeData: superjson.serialize` (dehydrate) und `deserializeData: superjson.deserialize` (hydrate) in `query-client.ts`.
+This is needed when procedures send `Date`, `Map`, `Set`, or `BigInt`. Run `bun add superjson` and enable it in three places: `transformer: superjson` in `initTRPC...create`, `transformer: superjson` in `httpBatchLink`, plus `serializeData: superjson.serialize` (dehydrate) and `deserializeData: superjson.deserialize` (hydrate) in `query-client.ts`.

@@ -1,57 +1,57 @@
 ---
 name: monorepo
-description: Turborepo-Monorepos mit Bun-Workspaces und festem Namensschema - Root heißt @<projekt>/root, Apps und Packages heißen @<projekt>/<ordnername> (zum Beispiel @opencore/web, @opencore/auth). Verwenden beim Anlegen oder Erweitern eines Monorepos, bei neuen Apps oder Packages, turbo.json, Workspaces, geteiltem Code, internen Abhängigkeiten und der Frage, wohin Code gehört.
+description: Turborepo monorepos with Bun workspaces and a fixed naming scheme - root is @<project>/root, apps and packages are @<project>/<folder-name> (for example @opencore/web, @opencore/auth). Use when creating or extending a monorepo, adding apps or packages, editing turbo.json or workspaces, sharing code, managing internal dependencies, or deciding where code belongs.
 ---
 
-# Monorepo mit Turborepo
+# Monorepos with Turborepo
 
-Jedes Projekt, das aus mehr als einer App oder einem geteilten Package besteht, ist ein Turborepo mit Bun-Workspaces. Auch ein einzelnes Web-Projekt startet als Monorepo (`apps/web`), damit später Packages dazukommen können, ohne umzubauen.
+Any project with more than one app or a shared package is a Turborepo using Bun workspaces. Even a single web project starts as a monorepo (`apps/web`) so packages can be added later without restructuring.
 
-## Struktur und Namensschema
+## Structure and naming
 
 ```
-<projekt>/
-├── package.json         # name: "@<projekt>/root"
+<project>/
+├── package.json         # name: "@<project>/root"
 ├── turbo.json
 ├── biome.json
 ├── tsconfig.base.json
 ├── apps/
-│   └── web/             # name: "@<projekt>/web"
+│   └── web/             # name: "@<project>/web"
 └── packages/
-    └── auth/            # name: "@<projekt>/auth"
+    └── auth/            # name: "@<project>/auth"
 ```
 
-- `<projekt>` ist der Projektname in kebab-case und Kleinbuchstaben. Ist er unbekannt, wird er erfragt.
-- **Root:** `@<projekt>/root`, mit `"private": true`.
-- **Apps und Packages:** `@<projekt>/<ordnername>`. Der Ordner `apps/web` heißt `@<projekt>/web`, der Ordner `packages/auth` heißt `@<projekt>/auth`. Ordnername und Paketname-Suffix sind immer identisch.
-- Der Scope ist nur ein interner Namensraum. Nichts wird veröffentlicht, deshalb bleibt überall `"private": true`.
+- `<project>` is the project name in lowercase kebab-case. Ask for it if it is unknown.
+- **Root:** `@<project>/root`, with `"private": true`.
+- **Apps and packages:** `@<project>/<folder-name>`. The `apps/web` folder is `@<project>/web`; `packages/auth` is `@<project>/auth`. The folder name and package-name suffix always match.
+- The scope is an internal namespace only. Nothing is published, so keep `"private": true` everywhere.
 
-## Workspaces und interne Abhängigkeiten
+## Workspaces and internal dependencies
 
-- Das Root deklariert `"workspaces": ["apps/*", "packages/*"]`.
-- Interne Abhängigkeiten stehen als `"@<projekt>/auth": "workspace:*"` in der `package.json` des Verbrauchers.
-- Interne Packages exportieren ihren TypeScript-Quellcode direkt (`"exports": { ".": "./src/index.ts" }`), ohne eigenen Build-Schritt. Next.js-Apps nehmen sie dafür in `transpilePackages` in `next.config.ts` auf.
-- Der Alias `~` gilt pro App und pro Package für das eigene `src/` (Skill `file-conventions`). Ein Package importiert nie per `~` aus einem anderen Package, sondern über den Paketnamen.
+- Declare `"workspaces": ["apps/*", "packages/*"]` at the root.
+- Add internal dependencies to the consumer's `package.json`, for example `"@<project>/auth": "workspace:*"`.
+- Internal packages export their TypeScript source directly (`"exports": { ".": "./src/index.ts" }`), without a separate build step. Add them to `transpilePackages` in each consuming Next.js app's `next.config.ts`.
+- The `~` alias is scoped to each app or package's own `src/` (see `file-conventions`). Never import from another package with `~`; use the package name.
 
-## Was gehört in ein Package
+## What belongs in a package
 
-Ein Package entsteht, wenn Code von mehr als einer App gebraucht wird oder klar abgrenzbar ist. Typische Fälle: `@<projekt>/db` (Prisma, Skill `database`), `@<projekt>/auth` (better-auth, Skill `auth`), `@<projekt>/schemas` (geteilte Zod-Schemas), `@<projekt>/ui` (geteilte Mantine-Komponenten). Apps enthalten nur das, was zu genau dieser App gehört.
+Create a package when code is needed by multiple apps or is clearly separable. Common examples: `@<project>/db` (Prisma, see `database`), `@<project>/auth` (better-auth, see `auth`), `@<project>/schemas` (shared Zod schemas), and `@<project>/ui` (shared Mantine components). Apps contain only code specific to that app.
 
 ## `turbo.json`
 
-Turborepo 2 nutzt `tasks`. Vorlage im Skill `new-project`: `new-project/assets/root/turbo.json`.
+Turborepo 2 uses `tasks`. See the template in the `new-project` skill: `new-project/assets/root/turbo.json`.
 
-- `build` hängt von `^build` ab und nennt die Ausgaben (`.next/**` ohne `.next/cache/**`).
-- `dev` ist `persistent` und nicht gecacht.
-- **Umgebungsvariablen müssen deklariert werden.** Turborepo reicht im Strict-Modus nur Variablen an Tasks durch, die in `turbo.json` unter `env` oder `globalEnv` stehen. Fehlt `DATABASE_URL` dort, schlägt der Build mit einer scheinbar fehlenden Variable fehl, obwohl sie gesetzt ist.
+- `build` depends on `^build` and declares its outputs (`.next/**` excluding `.next/cache/**`).
+- `dev` is `persistent` and is not cached.
+- **Declare environment variables.** In strict mode, Turborepo passes only variables listed under `env` or `globalEnv` in `turbo.json` to tasks. If `DATABASE_URL` is missing there, the build reports it as missing even when it is set.
 
-## Befehle
+## Commands
 
 ```bash
 bun install
-bun run dev                              # alle Apps
-bunx turbo run build --filter=@<projekt>/web
-bun add <paket> --cwd apps/web           # Abhängigkeit für eine App
+bun run dev                              # all apps
+bunx turbo run build --filter=@<project>/web
+bun add <package> --cwd apps/web        # dependency for an app
 ```
 
-Neue App oder neues Package: Ordner unter `apps/` bzw. `packages/` anlegen, `package.json` mit dem Namensschema schreiben, `bun install` im Root ausführen.
+To add an app or package, create its folder under `apps/` or `packages/`, add a `package.json` using the naming scheme, then run `bun install` from the root.

@@ -1,15 +1,15 @@
-# Prisma 7 Setup mit PostgreSQL und Bun
+# Prisma 7 setup with PostgreSQL and Bun
 
-Quellen: Prisma-Dokumentation "Quickstart PostgreSQL" und "Upgrade to v7" (Stand November 2026). Vor dem Einsatz mit der aktuellen Doku abgleichen, falls die installierte Version abweicht.
+Sources: Prisma documentation "Quickstart PostgreSQL" and "Upgrade to v7" (as of November 2026). Compare with the current documentation before use if the installed version differs.
 
-## Inhalt
+## Contents
 
 1. Installation
 2. `prisma/schema.prisma`
 3. `prisma.config.ts`
 4. `src/lib/prisma.ts`
-5. Skripte in `package.json`
-6. `.gitignore` und Biome
+5. Scripts in `package.json`
+6. `.gitignore` and Biome
 7. Seed
 
 ## 1. Installation
@@ -20,7 +20,7 @@ bun add -D prisma@prev
 bunx --bun prisma init --datasource-provider postgresql --output ../src/generated/prisma
 ```
 
-`prisma init` legt `prisma/schema.prisma`, `prisma.config.ts` und eine `.env` an. Danach die Dateien an die folgenden Vorlagen angleichen.
+`prisma init` creates `prisma/schema.prisma`, `prisma.config.ts`, and an `.env` file. Then adjust the files to match the templates below.
 
 ## 2. `prisma/schema.prisma`
 
@@ -43,7 +43,7 @@ model Post {
 }
 ```
 
-Im `datasource`-Block steht keine `url`. Die Verbindung kommt aus `prisma.config.ts`.
+Do not put a `url` in the `datasource` block. The connection comes from `prisma.config.ts`.
 
 ## 3. `prisma.config.ts`
 
@@ -86,7 +86,7 @@ export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 ```
 
-Kein `import 'server-only'` in dieser Datei, damit auch Seed- und andere Bun-Skripte sie nutzen können. Die Server-Grenze sichern `~/lib/trpc/server` und die Procedures.
+Do not add `import 'server-only'` to this file, so seed and other Bun scripts can use it too. Enforce the server boundary in `~/lib/trpc/server` and the procedures.
 
 ## 5. Skripte in `package.json`
 
@@ -104,16 +104,16 @@ Kein `import 'server-only'` in dieser Datei, damit auch Seed- und andere Bun-Skr
 }
 ```
 
-Bun führt `postinstall` im eigenen Projekt aus. Läuft die Installation ohne `prisma` in `devDependencies` (Produktions-Install), den Schritt in den Build verlegen.
+Bun runs `postinstall` in the project itself. If installing without `prisma` in `devDependencies` (a production install), move this step to the build.
 
-## 6. `.gitignore` und Biome
+## 6. `.gitignore` and Biome
 
 ```
 # .gitignore
 /src/generated
 ```
 
-Der generierte Ordner liegt in `.gitignore` und wird dadurch auch von Biome übersprungen, sofern `vcs.useIgnoreFile` aktiv ist (siehe Skill `lint-and-test`).
+The generated folder is listed in `.gitignore` and is therefore also skipped by Biome when `vcs.useIgnoreFile` is enabled (see `lint-and-test`).
 
 ## 7. Seed
 
@@ -128,4 +128,4 @@ await prisma.post.create({
 await prisma.$disconnect()
 ```
 
-Aufruf über `bunx --bun prisma db seed`. Der `~`-Alias muss in der `tsconfig.json` stehen, damit Bun den Import auflöst.
+Run with `bunx --bun prisma db seed`. The `~` alias must be configured in `tsconfig.json` so Bun can resolve the import.

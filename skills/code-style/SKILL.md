@@ -1,37 +1,37 @@
 ---
 name: code-style
-description: Allgemeine Code-Regeln von dreitagebart - alle Bezeichner und Kommentare zwingend auf Englisch, Named Exports statt Default-Exports, TypeScript strict, Validierung mit Zod an Systemgrenzen, zentrale Env-Validierung in src/env.ts. Verwenden beim Schreiben, Reviewen und Refactoren von jedem Code, beim Benennen von Variablen, Funktionen, Typen und Modellen, beim Kommentieren und beim Zugriff auf Umgebungsvariablen.
+description: dreitagebart general coding rules - all identifiers and comments must be in English, named exports instead of default exports, strict TypeScript, Zod validation at system boundaries, and centralized environment validation in src/env.ts. Use when writing, reviewing, or refactoring code; naming variables, functions, types, or models; writing comments; or accessing environment variables.
 ---
 
-# Code-Regeln
+# Code style
 
-## Sprache im Code: Englisch, zwingend
+## Language in code: English, required
 
-- **Alle Bezeichner sind englisch:** Variablen, Funktionen, Typen, Klassen, Dateien, Ordner, Datenbankmodelle, Felder, tRPC-Procedures, Branch-Namen.
-- **Alle Code-Kommentare sind englisch.**
-- Das gilt auch dann, wenn der Nutzer auf Deutsch schreibt oder ein Fachbegriff deutsch ist. Für fachliche Begriffe ohne gute englische Entsprechung (zum Beispiel ein Begriff aus einer Domäne) einen englischen Begriff wählen und bei Bedarf einmal mit dem deutschen Begriff kommentieren.
-- Nicht betroffen: UI-Texte und Fehlermeldungen für Nutzer (Sprache des Produkts) sowie Dokumentation. Für die Sprache von Projekt-Dokumentation an vorhandener Doku orientieren oder nachfragen.
+- **All identifiers are English:** variables, functions, types, classes, files, folders, database models, fields, tRPC procedures, and branch names.
+- **All code comments are English.**
+- This applies even when the user writes in another language or a domain term is not English. Choose an English term for concepts without a good English equivalent and, if useful, explain it once with the original term in a comment.
+- This does not apply to UI text and user-facing error messages (use the product's language) or documentation. Follow the language of existing project documentation or ask.
 
-Kommentare erklären das Warum, nicht das Was. Ein Kommentar, der den Code nur wiederholt, wird weggelassen.
+Comments explain why, not what. Omit comments that merely repeat the code.
 
-## Exporte
+## Exports
 
-- Named Exports sind der Standard (`export const BasicButton = ...`).
-- `export default` nur dort, wo das Framework es verlangt: Next.js-Spezialdateien wie `page.tsx`, `layout.tsx`, `error.tsx`, `loading.tsx` und `not-found.tsx` sowie Konfigurationsdateien. `route.ts` nutzt benannte Exports (`GET`, `POST`).
+- Named exports are the default (`export const BasicButton = ...`).
+- Use `export default` only where the framework requires it: Next.js special files such as `page.tsx`, `layout.tsx`, `error.tsx`, `loading.tsx`, and `not-found.tsx`, as well as configuration files. `route.ts` uses named exports (`GET`, `POST`).
 
 ## TypeScript
 
-- `strict: true` in jeder `tsconfig.json`.
-- `any` wird vermieden. Unbekannte Daten sind `unknown` und werden mit Zod geparst. Muss ein `any` bleiben (zum Beispiel wegen einer Bibliothekstyp-Grenze), steht ein `biome-ignore` mit Begründung davor.
-- Typen aus Zod-Schemas ableiten (`z.infer`), nicht doppelt von Hand schreiben.
+- Set `strict: true` in every `tsconfig.json`.
+- Avoid `any`. Treat unknown data as `unknown` and parse it with Zod. If `any` must remain (for example, at a library type boundary), put a `biome-ignore` with a reason immediately above it.
+- Derive types from Zod schemas (`z.infer`); do not duplicate them by hand.
 
-## Validierung an Systemgrenzen
+## Validation at system boundaries
 
-Alles, was von außen kommt, wird mit Zod geprüft, bevor der Code damit arbeitet: tRPC-Inputs, Formulare, Webhooks, externe APIs, Umgebungsvariablen. Innerhalb des Systems vertrauen sich Funktionen über Typen und prüfen nicht doppelt.
+Validate everything from outside with Zod before using it: tRPC inputs, forms, webhooks, external APIs, and environment variables. Inside the system, functions trust types and do not validate the same data again.
 
-## Umgebungsvariablen
+## Environment variables
 
-- Zugriff nur über `src/env.ts`, das alle Variablen mit Zod validiert und als `env` exportiert (Vorlage im Skill `new-project`: `new-project/assets/web/src/env.ts`). Kein verstreutes `process.env.X` im Code.
-- Die Datei schlägt beim Start fehl, wenn eine Variable fehlt oder falsch aussieht. Das ist gewollt: Ein Fehler beim Start ist besser als ein Fehler zur Laufzeit.
-- Variablen für den Browser tragen den Präfix `NEXT_PUBLIC_` und werden getrennt von den Server-Variablen geführt.
-- `.env` wird nie committet. Eine `.env.example` mit allen Namen und Dummywerte oder ohne Werte wird committet.
+- Access variables only through `src/env.ts`, which validates all of them with Zod and exports `env` (template in the `new-project` skill: `new-project/assets/web/src/env.ts`). Do not scatter `process.env.X` throughout the code.
+- Fail at startup if a variable is missing or malformed. This is intentional: a startup failure is better than a runtime failure.
+- Prefix browser variables with `NEXT_PUBLIC_` and keep them separate from server variables.
+- Never commit `.env`. Commit `.env.example` with all variable names and dummy or empty values.

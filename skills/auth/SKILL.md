@@ -1,41 +1,41 @@
 ---
 name: auth
-description: Authentifizierung mit better-auth - Prisma-Adapter für PostgreSQL, Next.js-Route-Handler, nextCookies, Session in Server-Komponenten und im tRPC-Kontext, geschützte Routen und Procedures. Verwenden bei Login, Registrierung, Sessions, Rollen, OAuth, Passwort-Reset, geschützten Seiten oder Procedures und Auth-Tabellen - auch wenn nur "ein Login" oder "nur für eingeloggte Nutzer" verlangt wird.
+description: Authentication with better-auth - Prisma adapter for PostgreSQL, Next.js route handlers, nextCookies, sessions in Server Components and tRPC context, protected routes and procedures. Use for login, registration, sessions, roles, OAuth, password resets, protected pages or procedures, and auth tables, including requests for "just a login" or "only signed-in users".
 ---
 
-# Authentifizierung mit better-auth
+# Authentication with better-auth
 
-Auth läuft über better-auth mit dem Prisma-Adapter auf PostgreSQL. Kein NextAuth/Auth.js, kein Clerk, solange der Nutzer nichts anderes verlangt. Die Dateien mit Code stehen in `references/better-auth-setup.md`.
+Use better-auth with the Prisma adapter on PostgreSQL. Do not use NextAuth/Auth.js or Clerk unless the user asks for them. Code files are in `references/better-auth-setup.md`.
 
-## Bausteine
+## Components
 
-| Datei | Zweck |
+| File | Purpose |
 |---|---|
-| `src/lib/auth.ts` | Server-Instanz `betterAuth({...})` mit Prisma-Adapter |
-| `src/lib/auth-client.ts` | Client-Instanz `createAuthClient()` aus `better-auth/react` |
-| `src/app/api/auth/[...all]/route.ts` | Route-Handler über `toNextJsHandler(auth)` |
-| `src/proxy.ts` | optionale Schnellprüfung des Session-Cookies für geschützte Pfade |
+| `src/lib/auth.ts` | Server instance `betterAuth({...})` with Prisma adapter |
+| `src/lib/auth-client.ts` | Client instance `createAuthClient()` from `better-auth/react` |
+| `src/app/api/auth/[...all]/route.ts` | Route handler using `toNextJsHandler(auth)` |
+| `src/proxy.ts` | Optional quick check for a session cookie on protected paths |
 
-## Regeln
+## Rules
 
-- **`nextCookies()` ist das letzte Plugin** im `plugins`-Array. Es erlaubt Server-Aufrufen über `auth.api`, Cookies zu setzen.
-- **Session auf dem Server** über `auth.api.getSession({ headers: await headers() })`. Im tRPC-Kontext wird sie einmal gelesen und als `ctx.session` bereitgestellt (Skill `data-fetching`). Geschützte Procedures nutzen `protectedProcedure`.
-- **Die Prüfung in `proxy.ts` ist nur eine Komfortschranke.** Dort wird nur geprüft, ob ein Session-Cookie existiert, ohne Datenbankzugriff. Die eigentliche Berechtigung wird in Procedures und Server-Komponenten geprüft, weil ein Cookie allein nichts beweist.
-- **Umgebungsvariablen** `BETTER_AUTH_SECRET` (mindestens 32 Zeichen) und `BETTER_AUTH_URL` stehen in `src/env.ts` und werden mit Zod validiert. Eine falsche `BETTER_AUTH_URL` zwischen Umgebungen ist eine häufige Fehlerquelle.
-- **Passwörter, Tokens und Secrets** erscheinen nie in Logs oder im Code.
-- Formulare für Login und Registrierung nutzen `@mantine/form` mit Zod (Skill `forms`) und rufen `authClient.signIn.email` bzw. `authClient.signUp.email` auf.
+- **`nextCookies()` must be the last plugin** in the `plugins` array. It allows server calls through `auth.api` to set cookies.
+- **Read the session on the server** with `auth.api.getSession({ headers: await headers() })`. Read it once in the tRPC context and expose it as `ctx.session` (see `data-fetching`). Protected procedures use `protectedProcedure`.
+- **The check in `proxy.ts` is only a convenience gate.** It checks whether a session cookie exists, without accessing the database. Check actual authorization in procedures and Server Components because a cookie alone proves nothing.
+- **Environment variables** `BETTER_AUTH_SECRET` (at least 32 characters) and `BETTER_AUTH_URL` belong in `src/env.ts` and must be validated with Zod. A mismatched `BETTER_AUTH_URL` between environments is a common source of errors.
+- **Never put passwords, tokens, or secrets in logs or code.**
+- Login and registration forms use `@mantine/form` with Zod (see `forms`) and call `authClient.signIn.email` or `authClient.signUp.email`.
 
-## Schema und Migration
+## Schema and migration
 
-Die Auth-Tabellen kommen aus der better-auth-CLI und werden nicht von Hand geschrieben:
+Generate auth tables with the better-auth CLI; do not write them by hand:
 
 ```bash
 bunx @better-auth/cli@latest generate --output prisma/schema.prisma
 bunx --bun prisma migrate dev --name add-auth
 ```
 
-Nach `generate` die Schema-Datei prüfen. Der `generator`-Block muss `prisma-client` mit `output` bleiben, und im `datasource`-Block darf keine `url` stehen (Prisma 7, Skill `database`). Nach jedem neuen better-auth-Plugin `generate` und die Migration erneut ausführen.
+After `generate`, inspect the schema file. Keep the `generator` block as `prisma-client` with `output`, and do not add a `url` to the `datasource` block (Prisma 7; see `database`). After adding a better-auth plugin, run `generate` and the migration again.
 
-## Hinweis zu Next.js-Versionen
+## Next.js version note
 
-In Next.js 16 heißt die Datei `proxy.ts` und die Funktion `proxy`. In Next.js 15 und älter heißt sie `middleware.ts` und `middleware`. Die installierte Version prüfen.
+In Next.js 16, the file is named `proxy.ts` and the function `proxy`. In Next.js 15 and earlier, they are `middleware.ts` and `middleware`. Check the installed version.

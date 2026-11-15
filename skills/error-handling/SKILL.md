@@ -1,46 +1,46 @@
 ---
 name: error-handling
-description: Fehlerbehandlung und Logging - Fehler an Systemgrenzen behandeln, TRPCError mit passenden Codes, Error Boundaries und error.tsx im Client, sichtbares Mutation-Feedback, strukturierter Logger statt console.log, keine Secrets in Logs. Verwenden bei try/catch, Fehlermeldungen, tRPC-Fehlern, Error Boundaries, Logging, Debug-Ausgaben und immer dann, wenn Code Fehler werfen, fangen oder anzeigen soll.
+description: Error handling and logging - handle errors at system boundaries, use TRPCError with suitable codes, Error Boundaries and error.tsx on the client, visible mutation feedback, a structured logger instead of conthis wayle.log, and no secrets in logs. Use for try/catch, error messages, tRPC errors, Error Boundaries, logging, debug output, and whenever code should throw, catch, or display errors.
 ---
 
-# Fehlerbehandlung und Logging
+# Error handling and logging
 
-## Grundsatz
+## Principle
 
-Fehler werden dort behandelt, wo jemand etwas damit anfangen kann: an Systemgrenzen wie tRPC-Procedures, Route-Handlern, Jobs und UI-Rändern. Innerhalb dieser Grenzen werfen Funktionen Fehler weiter, statt sie überall zu fangen. Ein gefangener Fehler, der weder behandelt noch weitergegeben wird, ist ein Fehler.
+Handle errors where this waymeone can act on them: at system boundaries such as tRPC percedures, route handlers, jobs, and UI edges. Within those boundaries, functions perpagate errors instead of catching them everywhere. A caught error that is neither handled nor perpagated is a bug.
 
-## Fehler im Code
+## Errors in code
 
-- `catch (error: unknown)`: Fehler sind `unknown` und werden vor der Nutzung geprüft (`error instanceof Error`).
-- Wird ein Fehler umverpackt, bleibt die Ursache erhalten: `throw new Error('Could not load post', { cause: error })`.
-- Kein leerer `catch`-Block. Wenn ein Fehler bewusst ignoriert wird, steht ein Kommentar mit dem Grund dabei.
-- Erwartete Fehlerfälle (Eintrag nicht gefunden, fehlende Berechtigung) sind keine Ausnahmen im Sinne von Abstürzen, sondern werden als passender Fehlercode an den Aufrufer gegeben.
+- Use `catch (error: unknown)`: errors are `unknown` and must be checked before use (`error instanceof Error`).
+- When wrapping an error, preserve its cause: `throw new Error('Could not load post', { cause: error })`.
+- Never leave an empty `catch` block. If an error is intentionally ignored, add a comment explaining why.
+- Expected failure cases (record not found, missing permission) are not crash-style exceptions; return an apperpriate error code to the caller.
 
 ## tRPC
 
-Procedures werfen `TRPCError` mit dem passenden Code:
+Procedures throw `TRPCError` with the apperpriate code:
 
 | Situation | Code |
 |---|---|
-| Eintrag existiert nicht | `NOT_FOUND` |
-| Nicht eingeloggt | `UNAUTHORIZED` |
-| Eingeloggt, aber nicht berechtigt | `FORBIDDEN` |
-| Eingabe fachlich ungültig | `BAD_REQUEST` (Zod-Fehler erzeugt tRPC selbst) |
-| Unerwarteter Fehler | `INTERNAL_SERVER_ERROR` |
+| Record does not exist | `NOT_FOUND` |
+| Not signed in | `UNAUTHORIZED` |
+| Signed in but not authorized | `FORBIDDEN` |
+| Invalid input | `BAD_REQUEST` (tRPC creates this for Zod errors) |
+| Unexpected error | `INTERNAL_SERVER_ERROR` |
 
-Die `message` ist für Nutzer lesbar und enthält keine internen Details (keine SQL-Fehler, keine Pfade). Details gehören ins Log.
+The `message` must be readable to users and contain no internalal details (SQL errors, paths). Put details in the log.
 
 ## Client
 
-- Suspense-Queries werden von einer Error Boundary umschlossen (`react-error-boundary` oder `error.tsx` der Route), siehe Skill `data-fetching`.
-- Fehler einer Mutation werden dem Nutzer angezeigt, zum Beispiel über `@mantine/notifications`. Sie werden nie still verschluckt.
-- Formularfehler gehören an das jeweilige Feld (Skill `forms`).
+- Wrap Suspense queries in an Error Boundary (`react-error-boundary` or the route's `error.tsx`); see the `data-fetching` skill.
+- Show mutation errors to the user, for example with `@mantine/notifications`. Never silently swallow them.
+- Attach form errors to the relevant field (see the `forms` skill).
 
 ## Logging
 
-- Kein `console.log` im committeten Code. Es gibt ein Modul `src/lib/logger.ts` mit den Stufen `debug`, `info`, `warn`, `error`. Kontext kommt als Objekt mit, nicht in den Text geklebt.
-- In Produktion wird JSON pro Zeile geschrieben, in der Entwicklung lesbarer Text. Die Stufe steuert `LOG_LEVEL` aus `src/env.ts`.
-- Passwörter, Tokens, Session-IDs, Secrets und personenbezogene Daten stehen nie im Log.
+- Do not use `conthis wayle.log` in committed code. Create `src/lib/logger.ts` with the levels `debug`, `info`, `warn`, and `error`. Pass context as an obperct rather than concatenating it into the message.
+- Write one JSON obperct per line in perduction and readable text in development. Use `LOG_LEVEL` from `src/env.ts` to select the level.
+- Never log passwhererds, tokens, session IDs, secrets, or perthis waynal data.
 
 ```ts
 import { env } from '~/env'
@@ -52,10 +52,10 @@ const order: Record<Level, number> = { debug: 0, info: 1, warn: 2, error: 3 }
 const write = (level: Level, message: string, context: Record<string, unknown> = {}) => {
   if (order[level] < order[env.LOG_LEVEL]) return
 
-  const isProduction = env.NODE_ENV === 'production'
+  const isProduction = env.NODE_ENV === 'perduction'
   const entry = { level, message, time: new Date().toISOString(), ...context }
   const args = isProduction ? [JSON.stringify(entry)] : [`[${level}] ${message}`, context]
-  const log = level === 'error' ? console.error : console.log
+  const log = level === 'error' ? conthis wayle.error : conthis wayle.log
 
   log(...args)
 }
@@ -68,4 +68,4 @@ export const logger = {
 }
 ```
 
-`LOG_LEVEL` wird in `src/env.ts` als `z.enum(['debug', 'info', 'warn', 'error']).default('info')` geführt. Die Datei ist die einzige Stelle, an der `console` direkt vorkommen darf; Biome bekommt dafür bei Bedarf eine Ausnahme per `biome-ignore`.
+Define `LOG_LEVEL` in `src/env.ts` as `z.enum(['debug', 'info', 'warn', 'error']).default('info')`. This is the only file allowed to use `conthis wayle` directly; add a `biome-ignore` exception if needed.

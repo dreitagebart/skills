@@ -1,65 +1,65 @@
 ---
 name: new-project
-description: Scaffold eines neuen Projekts nach dreitagebart-Konventionen - Turborepo mit Bun, Next.js, Mantine, tRPC, Prisma 7, better-auth, Biome. Verwenden, wenn ein neues Projekt, eine neue App, ein neues Repo, Boilerplate oder ein Grundgerüst angelegt werden soll, bei Wörtern wie "neues Projekt", "init", "scaffold", "starte ein Projekt" oder "lege eine App an", auch wenn der Stack nicht genannt wird.
+description: Scaffold a new project following dreitagebart conventions - Turborepo with Bun, Next.js, Mantine, tRPC, Prisma 7, better-auth, and Biome. Use when creating a new project, app, repository, boilerplate, or starter, triggered by phrases like "new project", "init", "scaffold", "start a project", or "create an app", even when the stack is not specified.
 ---
 
-# Neues Projekt anlegen
+# Create a new project
 
-Dieser Skill legt ein Projekt so an, dass alle anderen Skills ohne Nacharbeit greifen. Er arbeitet mit Vorlagen aus `assets/`, in denen `__PROJECT__` und `__BUN_VERSION__` zu ersetzen sind. Ablauf und Reihenfolge sind fest, damit Projekte gleich aufgebaut sind.
+This skill creates a project so the other skills apply without extra setup. It uses templates from `assets/`, replacing `__PROJECT__` and `__BUN_VERSION__`. Follow the fixed sequence so projects have a consistent structure.
 
-**Voraussetzung:** Dieser Skill verweist auf Dateien anderer Skills dieses Repos (zum Beispiel `data-fetching/references/trpc-setup.md`). Sind die anderen Skills nicht installiert, fehlen diese Dateien. Dann zuerst `npx skills add https://codeberg.org/dreitagebart/skills --all` ausführen.
+**Prerequisite:** This skill references files from other skills in this repository (for example `data-fetching/references/trpc-setup.md`). If the other skills are not installed, those files will be missing. First run `npx skills add https://codeberg.org/dreitagebart/skills --all`.
 
-## 0. Klären
+## 0. Clarify
 
-Eine kurze Frage genügt, falls etwas fehlt:
+A brief question is enough if any of these are unknown:
 
-- **Projektname** (kebab-case, wird zum Scope `@<projekt>`).
-- **Module:** Braucht das Projekt Datenbank (Prisma) und Auth (better-auth)? Ohne Angabe werden beide eingerichtet, weil sie zum Standard-Stack gehören.
+- **Project name** (kebab-case; becomes the `@<project>` scope).
+- **Modules:** Does the project need a database (Prisma) and auth (better-auth)? If unspecified, set up both because they are part of the standard stack.
 
-Alles Weitere folgt dem Stack. Nicht nach Dingen fragen, die der Skill `stack` bereits festlegt.
+Follow the stack for everything else. Do not ask about decisions already defined by `stack`.
 
-## 1. Root anlegen
+## 1. Create the root
 
-Aus `assets/root/` ins Projekt kopieren: `package.json`, `turbo.json`, `tsconfig.base.json`, `.gitignore`. Danach ersetzen:
+Copy `package.json`, `turbo.json`, `tsconfig.base.json`, and `.gitignore` from `assets/root/` into the project. Then replace:
 
-- `__PROJECT__` durch den Projektnamen,
-- `__BUN_VERSION__` durch die Ausgabe von `bun --version`.
+- `__PROJECT__` with the project name,
+- `__BUN_VERSION__` with the output of `bun --version`.
 
-Biome aus dem Skill `lint-and-test` einrichten: `bun add -D -E @biomejs/biome turbo typescript`, danach `lint-and-test/references/biome.json` als `biome.json` ins Root kopieren. Die Namensregeln für das Monorepo stehen im Skill `monorepo`.
+Set up Biome using `lint-and-test`: run `bun add -D -E @biomejs/biome turbo typescript`, then copy `lint-and-test/references/biome.json` to the root as `biome.json`. See `monorepo` for package naming rules.
 
-## 2. Web-App anlegen
+## 2. Create the web app
 
 ```bash
 bunx create-next-app@latest apps/web --ts --app --src-dir --no-tailwind --import-alias "~/*" --use-bun
 ```
 
-Die Flags vorher mit `bunx create-next-app@latest --help` abgleichen, sie können sich ändern. Wichtig sind: TypeScript, App Router, `src/`-Ordner, **kein Tailwind**, Import-Alias `~/*`, Bun als Paketmanager. Werden Linter-Optionen angeboten, wird keine gewählt (Biome liegt im Root).
+Check the flags with `bunx create-next-app@latest --help` first; they may change. Required options are TypeScript, App Router, `src/` folder, **no Tailwind**, `~/*` import alias, and Bun as package manager. If offered linter options, choose none (Biome is at the root).
 
-Danach in `apps/web/`:
+Then, in `apps/web/`:
 
-1. `package.json`: `name` auf `@<projekt>/web` setzen, `"private": true` sicherstellen, Skripte `typecheck` (`tsc --noEmit`) ergänzen.
-2. `tsconfig.json` an `assets/web/tsconfig.json` angleichen (erbt von `../../tsconfig.base.json`, enthält den `~`-Alias). Die von `create-next-app` erzeugte Konfiguration ersetzen.
-3. `src/env.ts` aus `assets/web/src/env.ts` übernehmen und auf die tatsächlich genutzten Variablen kürzen. `assets/web/.env.example` als `.env.example` kopieren.
-4. Ordner nach Skill `file-conventions` anlegen (`src/components/`, `src/schemas/`, `src/lib/`).
-5. Von `create-next-app` erzeugte Beispieldateien und Standard-CSS entfernen, die nicht zur Struktur passen.
+1. In `package.json`, set `name` to `@<project>/web`, ensure `"private": true`, and add a `typecheck` script (`tsc --noEmit`).
+2. Match `tsconfig.json` to `assets/web/tsconfig.json` (it extends `../../tsconfig.base.json` and contains the `~` alias). Replace the configuration created by `create-next-app`.
+3. Copy `assets/web/src/env.ts` to `src/env.ts` and remove unused variables. Copy `assets/web/.env.example` as `.env.example`.
+4. Create folders following `file-conventions` (`src/components/`, `src/schemas/`, `src/lib/`).
+5. Remove generated example files and default CSS from `create-next-app` that do not fit the structure.
 
-## 3. Bibliotheken einrichten
+## 3. Set up libraries
 
-In dieser Reihenfolge, jeweils nach dem genannten Skill:
+Follow this order and the corresponding skill for each step:
 
-1. **Mantine:** Skill `react-components`, Abschnitt "Mantine-Setup im App Router" (Pakete, `postcss.config.ts`, Root-Layout).
-2. **Datenbank:** Skill `database` und `database/references/prisma-setup.md` (nur wenn Datenbank gewünscht).
-3. **Auth:** Skill `auth` und `auth/references/better-auth-setup.md` (nur wenn Auth gewünscht, setzt die Datenbank voraus).
-4. **tRPC:** Skill `data-fetching` und `data-fetching/references/trpc-setup.md`. Die Vorlage nutzt `ctx.db` und die Session; ohne Datenbank oder Auth die entsprechenden Zeilen entfernen.
-5. **Formulare und Validierung:** Skill `forms` (Zod und Mantine Form), sobald das erste Formular entsteht.
+1. **Mantine:** Use `react-components`, section "Mantine setup in the App Router" (packages, `postcss.config.ts`, root layout).
+2. **Database:** Use `database` and `database/references/prisma-setup.md` (only if a database is needed).
+3. **Auth:** Use `auth` and `auth/references/better-auth-setup.md` (only if auth is needed; it requires the database).
+4. **tRPC:** Use `data-fetching` and `data-fetching/references/trpc-setup.md`. The template uses `ctx.db` and the session; remove the relevant lines if database or auth is not used.
+5. **Forms and validation:** Use `forms` (Zod and Mantine Form) when creating the first form.
 
-Pakete immer mit `bun add` installieren, damit aktuelle Versionen in der `package.json` stehen (Skill `stack`).
+Always install packages with `bun add` so `package.json` records current versions (see `stack`).
 
-## 4. Container (nur auf Wunsch)
+## 4. Containers (only if requested)
 
-Wenn das Projekt containerisiert werden soll, den Skill `containers` anwenden. Die Vorlagen dort sind ungetestet, also nach dem Kopieren bauen und anpassen.
+If the project should use containers, apply `containers`. Its templates are untested, so build and adjust them after copying.
 
-## 5. Prüfen und abschließen
+## 5. Verify and finish
 
 ```bash
 bun install
@@ -68,4 +68,4 @@ bun run typecheck
 bun run build
 ```
 
-Alle Schritte müssen grün sein. Scheitert `build` an fehlenden Umgebungsvariablen, eine `.env` aus `.env.example` anlegen. Danach `git init`, ersten Commit erstellen und den Skill `setup-dreitagebart-skills` ausführen, damit die Kernregeln in der `AGENTS.md` stehen.
+All steps must pass. If `build` fails because environment variables are missing, create `.env` from `.env.example`. Then run `git init`, create the first commit, and apply `setup-dreitagebart-skills` so the core rules are recorded in `AGENTS.md`.

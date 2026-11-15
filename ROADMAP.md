@@ -1,52 +1,52 @@
-# Roadmap und Stand
+# Roadmap and Status
 
-## Offen: von dir zu liefern
+## Open: items for you to provide
 
-| Thema | Wo es hinkommt |
+| Topic | Where it belongs |
 |---|---|
-| Biome-Regeln | `skills/lint-and-test/references/biome.json` ersetzen (aktuell nur Basis) |
-| Compose-Templates | `skills/containers/assets/` (aktuell ein Platzhalter `compose.yml`) |
-| Git-Workflow | `drafts/git-workflow/SKILL.md` füllen, dann nach `skills/` verschieben |
-| Tabellen-Darstellung | Entscheidung in `skills/stack/SKILL.md`: eigene Mantine-`Table` oder `mantine-react-table` |
-| Datenbank-Namensschema | Entscheidung in `skills/database/SKILL.md`: `@@map`/`@map` auf snake_case oder nicht |
-| Komponententests | DOM-Umgebung (zum Beispiel happy-dom) in `skills/lint-and-test/SKILL.md` festlegen |
+| Biome rules | Replace `skills/lint-and-test/references/biome.json` (currently only a baseline) |
+| Compose templates | `skills/containers/assets/` (currently a placeholder `compose.yml`) |
+| Git workflow | Fill in `drafts/git-workflow/SKILL.md`, then move it to `skills/` |
+| Table rendering | Decide in `skills/stack/SKILL.md`: Mantine `Table` or `mantine-react-table` |
+| Database naming scheme | Decide in `skills/database/SKILL.md`: map to snake_case with `@@map`/`@map` or not |
+| Component tests | Choose a DOM environment (for example happy-dom) in `skills/lint-and-test/SKILL.md` |
 
-## Zu prüfen: Vorschläge von Claude, nicht von dir
+## To review: suggestions from Claude, not from you
 
-Diese Punkte stehen in den Skills, stammen aber nicht aus deinen Vorgaben. Bitte durchsehen und streichen oder bestätigen.
+These items are in the skills but did not come from your instructions. Review and remove or confirm them.
 
-- **Skill `error-handling`** komplett: Grundsatz "an Grenzen behandeln", TRPCError-Codes, Logger-Modul mit Stufen und JSON in Produktion.
-- Testdateien liegen neben dem Code und heißen `<name>.test.ts(x)`.
-- Ordner `src/schemas/` für Zod-Schemas, die Formulare und tRPC teilen.
-- Prisma-Output unter `src/generated/prisma` (Import `~/generated/prisma/client`), damit der `~`-Alias greift.
-- Monorepo: Prisma in eigenem Package `@<projekt>/db`, weitere Package-Beispiele (`auth`, `schemas`, `ui`), interne Packages exportieren TypeScript-Quellen und stehen in `transpilePackages`.
-- `container_name` nach dem Muster `<projekt>-<dienst>`.
-- `runtime-and-languages`: kein Shell-Skript bei mehr als ein paar Zeilen Logik, stattdessen TypeScript mit `Bun.$`.
-- Biome-Basis: zwei Leerzeichen Einrückung.
-- `tsconfig.base.json` mit `noUncheckedIndexedAccess: true` (strenger als `strict`).
-- Root-Layout-Vorlage mit `lang="de"`, tRPC-Vorlage mit `react-error-boundary` als Abhängigkeit.
-- Skill-Namen ohne Präfix. Bei einer öffentlichen Veröffentlichung ein Präfix (`dtb-`) erwägen, um Kollisionen mit Skills anderer Repos zu vermeiden.
+- The entire `error-handling` skill: the principle "handle at boundaries", TRPCError codes, and a logger module with levels and JSON in production.
+- Test files live next to the code and use the name `<name>.test.ts(x)`.
+- `src/schemas/` for Zod schemas shared by forms and tRPC.
+- Prisma output under `src/generated/prisma` (import `~/generated/prisma/client`) so the `~` alias works.
+- Monorepo: Prisma in its own package `@<project>/db`, more package examples (`auth`, `schemas`, `ui`), internal packages export TypeScript sources and are listed in `transpilePackages`.
+- `container_name` follows the pattern `<project>-<service>`.
+- `runtime-and-languages`: avoid shell scripts with more than a few lines of logic; use TypeScript with `Bun.$` instead.
+- Biome baseline: two-space indentation.
+- `tsconfig.base.json` with `noUncheckedIndexedAccess: true` (stricter than `strict`).
+- Root layout template with `lang="en"`, tRPC template with `react-error-boundary` as a dependency.
+- Skill names without a prefix. Consider a prefix (`dtb-`) for a public release to avoid collisions with skills in other repositories.
 
-## Verifikationsstand (14. November 2026)
+## Verification status (November 14, 2026)
 
-**Ausgeführt und bestanden:**
-- `bun run validate` prüft alle 15 Skills (Frontmatter, Namen, Größen, Dateiverweise). Ein Negativtest mit absichtlich eingebauten Fehlern wurde erkannt.
-- Die echte `skills`-CLI entdeckt alle 15 Skills und nicht den Entwurf in `drafts/`. Eine Test-Installation einzelner Skills kopiert `references/` und `assets/` mit.
-- Das Logger-Beispiel (Entwicklung, Produktion, Stufen) und die Vorlagen `env.ts` und das Zod-Schema aus dem Skill `forms` laufen unter Bun mit Zod 4.
+**Run and passed:**
+- `bun run validate` checks all 15 skills (frontmatter, names, sizes, file references). A negative test with deliberately inserted errors was detected.
+- The real `skills` CLI discovers all 15 skills and excludes the draft in `drafts/`. A test installation of individual skills copies `references/` and `assets/` as well.
+- The logger example (development, production, levels), and the `env.ts` and Zod schema templates from the `forms` skill run under Bun with Zod 4.
 
-**Gegen aktuelle Dokumentation abgeglichen, aber nicht ausgeführt:**
-- Prisma 7 (Config, Generator, Driver-Adapter), tRPC v11 mit App Router, better-auth mit Prisma-Adapter, Mantine mit Next.js, `mantine-form-zod-resolver` für Zod 4, Biome 2.
+**Compared with current documentation, but not executed:**
+- Prisma 7 (config, generator, driver adapter), tRPC v11 with App Router, better-auth with Prisma adapter, Mantine with Next.js, `mantine-form-zod-resolver` for Zod 4, Biome 2.
 
-**Ungetestet:**
-- `Containerfile.bun-next` und `compose.yml`.
-- Der Ablauf von `new-project` (Flags von `create-next-app`, Turborepo-Konfiguration) an einem echten Projekt.
-- Alle Next.js-Codebeispiele in den Skills: Es wurde kein Next.js-Projekt gebaut.
+**Untested:**
+- `Containerfile.bun-next` and `compose.yml`.
+- The `new-project` workflow (flags for `create-next-app`, Turborepo configuration) in a real project.
+- All Next.js code examples in the skills: no Next.js project was built.
 
-Beim ersten echten Einsatz Abweichungen notieren und den betroffenen Skill sofort korrigieren.
+Record deviations during the first real use and update the affected skill immediately.
 
-## Nächste Schritte
+## Next steps
 
-1. Repo auf Codeberg anlegen und pushen (siehe README).
-2. In einem frischen Testprojekt `new-project` durchspielen und die Abweichungen in die Skills einarbeiten.
-3. Biome-Regeln, Compose-Templates und Git-Workflow nachliefern.
-4. Entscheiden, ob zusätzlich ein GitHub-Mirror oder ein npm-Paket sinnvoll ist.
+1. Create and push the repository on Codeberg (see README).
+2. Walk through `new-project` in a fresh test project and incorporate deviations into the skills.
+3. Provide Biome rules, Compose templates, and the Git workflow.
+4. Decide whether a GitHub mirror or npm package would also be useful.
