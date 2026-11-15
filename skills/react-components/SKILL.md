@@ -92,9 +92,12 @@ In `src/app/layout.tsx`:
 
 ```tsx
 import '@mantine/core/styles.css'
+import '~/styles/globals.css'
 
 import type { ReactNode } from 'react'
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core'
+import { defaultFont, headingFont } from '~/styles/fonts'
+import { theme } from '~/styles/theme'
 
 type Props = {
   children: ReactNode
@@ -106,8 +109,8 @@ const Layout = ({ children }: Props) => {
       <head>
         <ColorSchemeScript />
       </head>
-      <body>
-        <MantineProvider>{children}</MantineProvider>
+      <body className={`${defaultFont.variable} ${headingFont.variable}`}>
+        <MantineProvider theme={theme}>{children}</MantineProvider>
       </body>
     </html>
   )
@@ -115,6 +118,14 @@ const Layout = ({ children }: Props) => {
 
 export default Layout
 ```
+
+### Global styles, fonts, and theme
+
+- Keep app-wide styles in `src/styles/`: define `defaultFont` and `headingFont` as named exports in `fonts.ts`, export the Mantine theme as `theme` from `theme.ts`, and put global CSS in `globals.css`.
+- Load fonts with `next/font` in `fonts.ts`. Give each font a CSS variable and apply those variables to the root `<body>` in `app/layout.tsx`.
+- Define the theme with Mantine's `createTheme` in `theme.ts`. It may import the font definitions from `fonts.ts`; set `fontFamily` and `headings.fontFamily` to the corresponding CSS variables.
+- Import `globals.css` from the root `app/layout.tsx`, and pass the named `theme` export to `MantineProvider` through its `theme` prop.
+- Keep the Mantine core stylesheet import before `globals.css` so app-wide CSS can override Mantine defaults when needed.
 
 - Each additional Mantine package (`@mantine/dates`, `@mantine/notifications`) needs its own style import.
 - Place tRPC and TanStack Query providers inside `MantineProvider` in the layout tree (see `data-fetching`).

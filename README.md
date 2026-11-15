@@ -9,19 +9,19 @@ Status: version 0.1.0. Open items and verification status are in [ROADMAP.md](RO
 Install everything globally for all projects:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --all -g
+npx skills add https://codeberg.org/dreitagebart/skills.git --all -g
 ```
 
 Install selected skills in the current project only:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --skill file-conventions --skill react-components
+npx skills add https://codeberg.org/dreitagebart/skills.git --skill file-conventions --skill react-components
 ```
 
 Preview the available skills:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --list
+npx skills add https://codeberg.org/dreitagebart/skills.git --list
 ```
 
 Update with `npx skills update`.

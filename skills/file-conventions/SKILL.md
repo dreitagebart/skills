@@ -18,6 +18,10 @@ Use lowercase for all file and folder names and separate words with hyphens (keb
 ```
 src/
 ├── app/                         # Next.js App Router
+├── styles/                      # app-wide fonts, Mantine theme, and global CSS
+│   ├── fonts.ts
+│   ├── globals.css
+│   └── theme.ts
 ├── components/
 │   ├── buttons/                 # group (topic)
 │   │   ├── basic-button.tsx
@@ -34,10 +38,13 @@ src/
 ├── lib/
 │   ├── trpc/
 |   └── prisma.ts                # prisma client
+|   └── auth.ts                  # better auth instance
+|   └── auth-client.ts           # better auth client
 └── env.ts
 ```
 
 - Put one folder per group (topic) under `src/components/`, such as `buttons`, `forms`, or `layout`. Each group contains component files (for example `basic-button.tsx`) and an `index.ts` at the group root.
+- Put app-wide font definitions, the Mantine theme, and global CSS in `src/styles/`. Keep `globals.css` there rather than in `src/app/`; import it from the root layout.
 - A group may also contain files such as `*.module.css` or a topic-specific `types.ts`.
 - Put page-specific main views (`<page>-view.tsx`) under `src/views/`. Each view assembles a complete route and includes components from `src/components/`.
 - Keep files under `src/app/` (`page.tsx`) lean: they handle routing, params, metadata, and initial server-side data fetching, then render the appropriate view.

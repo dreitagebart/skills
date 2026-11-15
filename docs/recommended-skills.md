@@ -57,5 +57,5 @@ The skill includes its own renderer, which may require Node.js access according 
 The shorthand `owner/repo` in the `skills` CLI refers to GitHub. For skills on Codeberg, provide the full URL as with this repository:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --all
+npx skills add https://codeberg.org/dreitagebart/skills.git --all
 ```
