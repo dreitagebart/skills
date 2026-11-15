@@ -2,28 +2,28 @@
 
 dreitagebart coding guidelines as Agent Skills. A skill is a folder containing a `SKILL.md` that a coding agent loads for relevant tasks. This repository defines the stack, file conventions, component patterns, data access, database, auth, containers, and project setup so agents work consistently across projects.
 
-Status: version 0.1.0. Open items and verification status are in [ROADMAP.md](ROADMAP.md).
+Status: version 1.0.0. Open items and verification status are in [ROADMAP.md](ROADMAP.md).
 
 ## Installation
 
 Installing all skills is recommended because some skills depend on reference files from other skills. This ensures those references are available whenever a skill is used.
 
-Install everything globally for all projects:
+To install the skills run:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills.git --all -g
+npx skills add dreitagebart/skills
 ```
 
-To install only selected skills in the current project, make sure to include any skills they reference:
+To install only selected skills make sure to include any skills they reference:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills.git --skill file-conventions --skill react-components
+npx skills add dreitagebart/skills --skill file-conventions --skill react-components
 ```
 
 Preview the available skills:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills.git --list
+npx skills add dreitagebart/skills --list
 ```
 
 Update with `npx skills update`.
@@ -39,13 +39,13 @@ Then invoke the `setup-dreitagebart-skills` skill once in the project. It adds a
 Run the install command from the project root. Install all skills for the full set of conventions:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills.git --all
+npx skills add dreitagebart/skills
 ```
 
 Or install only the skills that match the project:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills.git --skill stack --skill file-conventions --skill react-components
+npx skills add dreitagebart/skills --skill stack --skill file-conventions --skill react-components
 ```
 
 Then ask your coding agent to apply `setup-dreitagebart-skills` once. Ask it to inspect the existing code against the installed skills and prepare a prioritized migration plan before changing files. Work through the plan in small steps, reviewing each area as it is updated.
@@ -55,7 +55,7 @@ Then ask your coding agent to apply `setup-dreitagebart-skills` once. Ask it to 
 Run this from the new project directory to install all skills, including the related files used by `new-project`:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills.git --all
+npx skills add dreitagebart/skills
 ```
 
 Ask your coding agent to follow `new-project`, and provide a project name plus whether the project needs a database and authentication. For example:
@@ -128,4 +128,4 @@ The script checks frontmatter, names, length limits, and file references. See [A
 
 ## License
 
-MIT; see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
