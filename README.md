@@ -6,13 +6,15 @@ Status: version 0.1.0. Open items and verification status are in [ROADMAP.md](RO
 
 ## Installation
 
+Installing all skills is recommended because some skills depend on reference files from other skills. This ensures those references are available whenever a skill is used.
+
 Install everything globally for all projects:
 
 ```bash
 npx skills add https://codeberg.org/dreitagebart/skills.git --all -g
 ```
 
-Install selected skills in the current project only:
+To install only selected skills in the current project, make sure to include any skills they reference:
 
 ```bash
 npx skills add https://codeberg.org/dreitagebart/skills.git --skill file-conventions --skill react-components
@@ -29,6 +31,54 @@ Update with `npx skills update`.
 > `new-project` references files from other skills in this repository and only works fully when all skills are installed. Use `--all` if in doubt.
 
 Then invoke the `setup-dreitagebart-skills` skill once in the project. It adds a short core-rules block to `AGENTS.md` so the always-applicable rules remain available even when a skill is not loaded automatically.
+
+## Using the skills in a project
+
+### Add conventions to an existing project
+
+Run the install command from the project root. Install all skills for the full set of conventions:
+
+```bash
+npx skills add https://codeberg.org/dreitagebart/skills.git --all
+```
+
+Or install only the skills that match the project:
+
+```bash
+npx skills add https://codeberg.org/dreitagebart/skills.git --skill stack --skill file-conventions --skill react-components
+```
+
+Then ask your coding agent to apply `setup-dreitagebart-skills` once. Ask it to inspect the existing code against the installed skills and prepare a prioritized migration plan before changing files. Work through the plan in small steps, reviewing each area as it is updated.
+
+### Start a new Next.js project
+
+Run this from the new project directory to install all skills, including the related files used by `new-project`:
+
+```bash
+npx skills add https://codeberg.org/dreitagebart/skills.git --all
+```
+
+Ask your coding agent to follow `new-project`, and provide a project name plus whether the project needs a database and authentication. For example:
+
+> Create a new Next.js project following the `new-project` skill. Use the name `my-project`. Include a database and authentication.
+
+The `new-project` workflow also applies `setup-dreitagebart-skills` when it finishes scaffolding.
+
+### Update installed skills
+
+Run the update command from the project root for project-installed skills:
+
+```bash
+npx skills update -p
+```
+
+For skills installed globally, use:
+
+```bash
+npx skills update -g
+```
+
+To check for available updates without installing them, run `npx skills check` in the project. See the [`skills` CLI documentation](https://github.com/vercel-labs/skills/blob/main/docs/commands.md#skills-update) for other update options.
 
 ## Skills
 
