@@ -1,8 +1,12 @@
 ---
 name: new-project
-description: Scaffold a new project following dreitagebart conventions - Turborepo with Bun, Next.js, Mantine, tRPC, Prisma 7, better-auth, and Biome. Use when creating a new project, app, repository, boilerplate, or starter, triggered by phrases like "new project", "init", "scaffold", "start a project", or "create an app", even when the stack is not specified.
+description: Scaffold a new project following dreitagebart conventions -
+  Next.js, Mantine, tRPC, Prisma 7, better-auth, and Biome, as either a
+  standalone app or a Turborepo monorepo.
+  Use when creating a new project, app, repository, boilerplate, or starter,
+  triggered by phrases like "new project", "init", "scaffold", "start a
+  project", or "create an app", even when the stack is not specified.
 ---
-
 # Create a new project
 
 This skill creates a project so the other skills apply without extra setup. It uses templates from `assets/`, replacing `__PROJECT__` and `__BUN_VERSION__`. Follow the fixed sequence so projects have a consistent structure.
@@ -14,31 +18,39 @@ This skill creates a project so the other skills apply without extra setup. It u
 A brief question is enough if any of these are unknown:
 
 - **Project name** (kebab-case; becomes the `@<project>` scope).
+- **Project structure:** Ask whether to create a standalone Next.js app or a Turborepo monorepo. Never assume monorepo by default.
 - **Modules:** Does the project need a database (Prisma) and auth (better-auth)? If unspecified, set up both because they are part of the standard stack.
 
 Follow the stack for everything else. Do not ask about decisions already defined by `stack`.
 
-## 1. Create the root
+## 1. Create the project structure
 
-Copy `package.json`, `turbo.json`, `tsconfig.base.json`, and `.gitignore` from `assets/root/` into the project. Then replace:
+### Standalone Next.js app
 
-- `__PROJECT__` with the project name,
-- `__BUN_VERSION__` with the output of `bun --version`.
+Create the Next.js app directly in the project directory, not in an `apps/web/` subdirectory. Keep its generated `package.json`, `tsconfig.json`, and `.gitignore`; do not add Turborepo or workspace configuration. Set the package name to the project name.
 
-Set up Biome using `lint-and-test`: run `bun add -D -E @biomejs/biome turbo typescript`, then copy `lint-and-test/references/biome.json` to the root as `biome.json`. See `monorepo` for package naming rules.
+### Turborepo monorepo
 
-## 2. Create the web app
+Copy `package.json`, `turbo.json`, `tsconfig.base.json`, and `.gitignore` from `assets/root/` into the project. Replace `__PROJECT__` with the project name and `__BUN_VERSION__` with the output of `bun --version`. Name the root package `@<project>/root`.
+
+Follow `monorepo` for workspace package naming only when the monorepo option was chosen.
+
+## 2. Create the Next.js app
+
+Use `.` as the destination for a standalone app and `apps/web` for a monorepo:
 
 ```bash
-bunx create-next-app@latest apps/web --ts --app --src-dir --no-tailwind --import-alias "~/*" --use-bun
+bunx create-next-app@latest <destination> --ts --app --src-dir --no-tailwind --import-alias "~/*" --use-bun
 ```
 
 Check the flags with `bunx create-next-app@latest --help` first; they may change. Required options are TypeScript, App Router, `src/` folder, **no Tailwind**, `~/*` import alias, and Bun as package manager. If offered linter options, choose none (Biome is at the root).
 
-Then, in `apps/web/`:
+After creating the app, set up Biome using `lint-and-test`: install `@biomejs/biome` and `typescript` as exact dev dependencies; add `turbo` only for a monorepo. Copy `lint-and-test/references/biome.json` to the project root as `biome.json`.
 
-1. In `package.json`, set `name` to `@<project>/web`, ensure `"private": true`, and add a `typecheck` script (`tsc --noEmit`).
-2. Match `tsconfig.json` to `assets/web/tsconfig.json` (it extends `../../tsconfig.base.json` and contains the `~` alias). Replace the configuration created by `create-next-app`.
+Then, in the app directory (`.` for standalone or `apps/web/` for monorepo):
+
+1. Ensure `"private": true` and add a `typecheck` script (`tsc --noEmit`). For a monorepo, set `name` to `@<project>/web`.
+2. In a monorepo, match `tsconfig.json` to `assets/web/tsconfig.json` (it extends `../../tsconfig.base.json` and contains the `~` alias). For a standalone app, keep the generated configuration and ensure it contains the `~` alias.
 3. Copy `assets/web/src/env.ts` to `src/env.ts` and remove unused variables. Copy `assets/web/.env.example` as `.env.example`.
 4. Create folders following `file-conventions` (`src/components/`, `src/schemas/`, `src/lib/`).
 5. Remove generated example files and default CSS from `create-next-app` that do not fit the structure.
@@ -61,11 +73,6 @@ If the project should use containers, apply `containers`. Its templates are unte
 
 ## 5. Verify and finish
 
-```bash
-bun install
-bun run lint
-bun run typecheck
-bun run build
-```
+From the project root, run `bun install`, `bun run lint`, `bun run typecheck`, and `bun run build` for either structure. For a monorepo, root scripts should delegate app tasks through Turborepo; standalone scripts run directly in the Next.js app.
 
 All steps must pass. If `build` fails because environment variables are missing, create `.env` from `.env.example`. Then run `git init`, create the first commit, and apply `setup-dreitagebart-skills` so the core rules are recorded in `AGENTS.md`.

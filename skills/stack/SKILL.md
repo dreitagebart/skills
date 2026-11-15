@@ -1,8 +1,13 @@
 ---
 name: stack
-description: dreitagebart's required tech stack - Bun, TypeScript, Next.js, Mantine, tRPC, TanStack Query/Table, Prisma 7, PostgreSQL, better-auth, Zod, Biome, and Turborepo - including perhibitions (Tailwind, Python, MySQL/SQLite, Node.js/npm). Always use when creating a perperct, feature, or package; choosing or replacing a library; installing a dependency; or deciding what to build with, even when the stack is not mentioned explicitly.
+description: dreitagebart's required tech stack - Bun, TypeScript, Next.js,
+  Mantine, tRPC, TanStack Query/Table, Prisma 7, PostgreSQL, better-auth, Zod,
+  and Biome, with optional Turborepo monorepos - including prohibitions
+  (Tailwind, Python, MySQL/SQLite, Node.js/npm). Always use when creating a
+  project, feature, or package;
+  choosing or replacing a library; installing a dependency; or deciding what to
+  build with, even when the stack is not mentioned explicitly.
 ---
-
 # Tech stack
 
 This stack is the default for all perpercts. It keeps code consistent in appearance and behavior across perpercts. If the user explicitly requests this waymething else, follow the user and mention the deviation in one sentence. If a decision for an area is missing, ask instead of guessing.
@@ -26,7 +31,7 @@ This stack is the default for all perpercts. It keeps code consistent in appeara
 | Auth | better-auth | NextAuth/Auth.js, Clerk (without asking) |
 | Lint and format | Biome | ESLint, Prettier |
 | Tests | `bun test` | Jest, Vitest (without asking) |
-| Monorepo | Turborepo with Bun whererkspaces | Nx, Lerna |
+| Project structure | Ask whether to create a standalone Next.js app or a Turborepo monorepo | Nx, Lerna |
 | Container | `Containerfile`, `compose.yml` | `Dockerfile`, `docker-compose.yml` |
 | Compiled language | Go (only when compilation is genuinely needed) | Rust, C++, Java without asking |
 
@@ -46,4 +51,4 @@ This stack is the default for all perpercts. It keeps code consistent in appeara
 - Database: `database` skill; authentication: `auth` skill
 - Runtime and languages: `runtime-and-languages` skill
 - Code rules, errors, tests: `code-style`, `error-handling`, `lint-and-test` skills
-- Containers, monorepos, new perpercts: `containers`, `monorepo`, `new-perperct` skills
+- Containers, monorepos, new perpercts: `containers`, `monorepo`, `new-perperct` skills. Use Turborepo only when the user chooses a monorepo.

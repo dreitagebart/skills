@@ -1,11 +1,14 @@
 ---
 name: monorepo
-description: Turborepo monorepos with Bun workspaces and a fixed naming scheme - root is @<project>/root, apps and packages are @<project>/<folder-name> (for example @opencore/web, @opencore/auth). Use when creating or extending a monorepo, adding apps or packages, editing turbo.json or workspaces, sharing code, managing internal dependencies, or deciding where code belongs.
+description: Turborepo monorepos with Bun workspaces and a fixed naming scheme -
+  root is @<project>/root, apps and packages are @<project>/<folder-name> (for
+  example @opencore/web, @opencore/auth). Use when creating or extending a
+  monorepo, adding apps or packages, editing turbo.json or workspaces, sharing
+  code, managing internal dependencies, or deciding where code belongs.
 ---
-
 # Monorepos with Turborepo
 
-Any project with more than one app or a shared package is a Turborepo using Bun workspaces. Even a single web project starts as a monorepo (`apps/web`) so packages can be added later without restructuring.
+Use this skill when the user chooses a Turborepo monorepo or when extending a project that already uses one. Do not turn a standalone app into a monorepo without asking. The `new-project` skill asks the user which structure to create.
 
 ## Structure and naming
 
