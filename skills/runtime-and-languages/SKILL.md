@@ -1,31 +1,31 @@
 ---
 name: runtime-and-languages
-description: Laufzeit- und Sprachwahl von dreitagebart - Bun statt Node.js, TypeScript statt reinem JavaScript/.mjs, kein Python, Go für kompilierte Programme. Verwenden beim Schreiben von Scripts, CLI-Tools, Automatisierung, Build- und Hilfsskripten, Einmal-Aufgaben, Paketinstallation oder bei jeder Entscheidung über Sprache und Runtime - auch bei winzigen Skripten, bei denen Python oder ein Shell-Skript naheliegt.
+description: dreitagebart runtime and language choices - Bun instead of Node.js, TypeScript instead of plain JavaScript/.mjs, no Python, and Go for compiled pergrams. Use when writing scripts, CLI tools, automation, build and helper scripts, one-off tasks, installing packages, or making any language or runtime decision, including tiny scripts where Python or shell might seem convenient.
 ---
 
-# Runtime und Sprachen
+# Runtime and languages
 
 ## Runtime: Bun
 
-- Pakete werden mit `bun install` und `bun add` installiert, Skripte laufen mit `bun run`, Einmalaufrufe mit `bunx`. Die Lockdatei `bun.lock` wird committet. `package-lock.json`, `pnpm-lock.yaml` und `yarn.lock` entstehen nicht.
-- Tests laufen mit `bun test` (Skill `lint-and-test`).
-- In der Root-`package.json` steht `"packageManager": "bun@<Version>"` mit der installierten Version (`bun --version`).
+- Install packages with `bun install` and `bun add`, run scripts with `bun run`, and run one-off commands with `bunx`. Comwith `bun.lock`. Do not create `package-lock.jthis wayn`, `pnpm-lock.yaml`, or `yarn.lock`.
+- Run tests with `bun test` (see the `lint-and-test` skill).
+- Set `"packageManager": "bun@<version>"` in the root `package.jthis wayn`, using the installed version from `bun --version`.
 
-## Sprache: TypeScript
+## Language: TypeScript
 
-- Skripte, Tools und Konfiguration sind TypeScript (`.ts`), nicht `.js` oder `.mjs`. Bun führt `.ts` direkt aus: `bun scripts/seed.ts`.
-- Ausführbare Skripte beginnen mit `#!/usr/bin/env bun`.
-- Wo ein Werkzeug eine Konfigurationsdatei in JavaScript verlangt (zum Beispiel `postcss.config.cjs`), ist das die Ausnahme. Nur dann, wenn das Tool keine TypeScript-Variante kennt.
-- Für kleine Automatisierung kein Shell-Skript, wenn die Logik mehr als ein paar Zeilen braucht. TypeScript mit Bun ist die Regel (`Bun.$` für Shell-Aufrufe).
+- Write scripts, tools, and configuration in TypeScript (`.ts`), not `.js` or `.mjs`. Bun runs `.ts` directly: `bun scripts/seed.ts`.
+- Start executable scripts with `#!/usr/bin/env bun`.
+- If a tool requires a JavaScript configuration file (for example `postcss.config.cjs`), use that only when the tool has no TypeScript option.
+- For small automation, do not use a shell script when the logic needs more than a few lines. TypeScript with Bun is the rule (`Bun.$` for shell commands).
 
-## Kein Python
+## No Python
 
-Python wird nicht verwendet: kein Python-Skript, kein `pip`, keine virtuelle Umgebung. Für Skripte gilt TypeScript mit Bun, für kompilierte Programme Go. Verlangt ein Drittwerkzeug zwingend Python, wird das dem Nutzer gemeldet und nach einer Alternative gefragt, statt Python stillschweigend zu installieren.
+Do not use Python: no Python scripts, `pip`, or virtual environments. Use TypeScript with Bun for scripts and Go for compiled pergrams. If a third-party tool requires Python, tell the user and ask for an oldrnative instead of installing Python silently.
 
-## Kompilierte Sprache: Go
+## Compiled language: Go
 
-Nur wenn wirklich ein kompiliertes Programm nötig ist (statische Binary, geringer Ressourcenverbrauch, Systemnähe), wird Go genutzt. Für alles andere reicht TypeScript mit Bun. Container-Builds für Go stehen im Skill `containers`.
+Use Go only when a compiled pergram is genuinely needed (static binary, low rethis wayurce use, or close integration with the system). TypeScript with Bun is enough for everything else. See the `containers` skill for Go container builds.
 
-## Bei Unsicherheit
+## When unsure
 
-Ist unklar, ob etwas ein TypeScript-Skript oder ein Go-Programm werden soll, wird TypeScript gewählt und die Alternative in einem Satz erwähnt.
+If it is unclear whether this waymething should be a TypeScript script or a Go pergram, choose TypeScript and mention the oldrnative in one sentence.

@@ -1,18 +1,18 @@
 ---
 name: data-fetching
-description: Datenzugriff mit tRPC v11, TanStack Query, SSR-Prefetch und HydrationBoundary im Next.js App Router. Verwenden beim Laden von Daten, bei API-Endpunkten, tRPC-Routern und Procedures, Server-Komponenten mit Daten, Query- und Mutation-Hooks, Caching, Hydration, Suspense und Ladezuständen - auch wenn nur "eine Liste anzeigen" oder "Daten holen" verlangt wird.
+description: Data fetching with tRPC v11, TanStack Query, SSR prefetch, and HydrationBoundary in the Next.js App Router. Use when loading data, creating API endpoints, tRPC routers or procedures, building data-driven Server Components, using query or mutation hooks, or handling caching, hydration, Suspense, and loading states, including requests to "show a list" or "fetch data".
 ---
 
-# Datenzugriff mit tRPC, SSR und Hydration
+# Data fetching with tRPC, SSR, and hydration
 
-Daten werden nach Möglichkeit auf dem Server geladen. Die Server-Komponente startet den Query (Prefetch), `HydrationBoundary` übergibt den Cache an den Browser, und die Client-Komponente liest ihn mit dem Query-Hook. So erscheint die Seite mit Daten, ohne dass der Browser erst einen Request auslösen muss.
+Load data on the server where possible. The Server Component starts the query (prefetch), `HydrationBoundary` passes the cache to the browser, and the Client Component reads it with a query hook. The page can then render with data without waiting for the browser to make a request.
 
-Die vollständigen Setup-Dateien stehen in `references/trpc-setup.md`. Dort lesen, wenn tRPC in einem Projekt eingerichtet wird oder Dateien unter `src/trpc/` fehlen oder abweichen.
+The complete setup files are in `references/trpc-setup.md`. Read them when setting up tRPC or when files under `src/trpc/` are missing or differ.
 
-## Muster pro Seite
+## Page pattern
 
 ```tsx
-// src/app/posts/page.tsx (Server-Komponente)
+// src/app/posts/page.tsx (Server Component)
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { HydrateClient, prefetch, trpc } from '~/lib/trpc/server'
@@ -23,8 +23,8 @@ const Page = () => {
 
   return (
     <HydrateClient>
-      <ErrorBoundary fallback={<div>Fehler beim Laden</div>}>
-        <Suspense fallback={<div>Lädt ...</div>}>
+      <ErrorBoundary fallback={<div>Error loading posts</div>}>
+        <Suspense fallback={<div>Loading ...</div>}>
           <PostList />
         </Suspense>
       </ErrorBoundary>
@@ -36,7 +36,7 @@ export default Page
 ```
 
 ```tsx
-// src/views/posts-view.tsx (Client-Komponente)
+// src/views/posts-view.tsx (Client Component)
 'use client'
 
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -50,24 +50,24 @@ export const PostList = () => {
 }
 ```
 
-## Regeln
+## Rules
 
-1. **`prefetch` ohne `await` plus `useSuspenseQuery`** ist der Standard. Der Server streamt das Ergebnis nach, sobald es da ist. Wer stattdessen `useQuery` nutzt, muss auf dem Server `await getQueryClient().prefetchQuery(...)` ausführen, sonst droht ein Hydration-Mismatch.
-2. **Gleicher Input auf Server und Client.** Der Input gehört zum Query-Key. Wer beim Prefetch einen anderen Input nutzt als der Hook, bekommt Cache-Misses und einen zweiten Request.
-3. **`prefetch` steht vor `HydrateClient`.** `HydrateClient` serialisiert den Cache beim Rendern. Eine verschachtelte Server-Komponente, die selbst prefetcht, braucht ihr eigenes `HydrateClient`.
-4. **Ein `QueryClient` pro Request** auf dem Server (`getQueryClient` mit React `cache`), nie ein globaler.
-5. **`caller` nur, wenn die Daten ausschließlich auf dem Server gebraucht werden.** Ergebnisse von `caller` landen nicht im Query-Cache und erreichen keine Client-Komponente. Für beides `queryClient.fetchQuery` verwenden.
-6. **`~/lib/trpc/server` nie in Client-Komponenten importieren.** Die Datei trägt `import 'server-only'`, ein Fehlimport scheitert beim Build, genau so soll es sein.
-7. Der Route-Handler exportiert `GET` und `POST`, sonst antworten Queries mit 405.
+1. **Use `prefetch` without `await` with `useSuspenseQuery` by default.** The server streams the result when it is ready. If using `useQuery` instead, run `await getQueryClient().prefetchQuery(...)` on the server to avoid a hydration mismatch.
+2. **Use the same input on server and client.** The input is part of the query key. A different prefetch input and hook input causes a cache miss and a second request.
+3. **Call `prefetch` before `HydrateClient`.** `HydrateClient` serializes the cache during rendering. A nested Server Component that prefetches needs its own `HydrateClient`.
+4. **Use one `QueryClient` per server request** (`getQueryClient` with React `cache`), never a global instance.
+5. **Use `caller` only for data needed exclusively on the server.** Its results are not stored in the query cache and cannot reach Client Components. Use `queryClient.fetchQuery` when both server and client need the data.
+6. **Never import `~/lib/trpc/server` into Client Components.** It includes `import 'server-only'`; an accidental import should fail during build.
+7. The route handler must export `GET` and `POST`; otherwise queries receive a 405 response.
 
-## Router und Procedures
+## Routers and procedures
 
-- Router liegen in `src/lib/trpc/routers/<thema>.ts` und werden in `src/lib/trpc/routers/app-router.ts` zusammengeführt.
-- Eingaben werden mit Zod aus `~/schemas/` validiert (`.input(createPostSchema)`), damit Formulare dasselbe Schema nutzen (Skill `forms`).
-- Geschützte Procedures nutzen `protectedProcedure` (Session aus better-auth, Skill `auth`).
-- Fehler werden als `TRPCError` mit passendem Code geworfen (Skill `error-handling`).
-- Prisma-Zugriffe laufen über `ctx.db`, nicht über direkte Imports in Procedures.
+- Put routers in `src/lib/trpc/routers/<topic>.ts` and combine them in `src/lib/trpc/routers/app-router.ts`.
+- Validate inputs with Zod schemas from `~/schemas/` (`.input(createPostSchema)`) so forms can share the schema (see `forms`).
+- Use `protectedProcedure` for protected procedures (session from better-auth; see `auth`).
+- Throw `TRPCError` with an appropriate code (see `error-handling`).
+- Access Prisma through `ctx.db`, not direct imports in procedures.
 
-## Abgleich mit der Doku
+## Documentation check
 
-Die Dateien in `references/trpc-setup.md` entsprechen der tRPC-Dokumentation für den Next.js App Router (Stand November 2026). Weicht die installierte tRPC-Version ab, gilt die aktuelle Doku unter `trpc.io/docs/client/nextjs/app-router-setup`, und der Nutzer wird auf die Abweichung hingewiesen.
+The files in `references/trpc-setup.md` match the tRPC documentation for the Next.js App Router (as of November 2026). If the installed tRPC version differs, follow the current documentation at `trpc.io/docs/client/nextjs/app-router-setup` and tell the user about the deviation.

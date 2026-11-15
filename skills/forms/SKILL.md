@@ -1,11 +1,11 @@
 ---
 name: forms
-description: Formulare und Eingabevalidierung mit @mantine/form und Zod (schemaResolver), Schemas geteilt zwischen Formular und tRPC-Procedure. Verwenden bei Formularen, useForm, Eingabefeldern, Validierungsregeln, Zod-Schemas für Eingaben, Mutations aus Formularen und Fehlermeldungen an Feldern - auch bei einem einzelnen Eingabefeld mit Validierung.
+description: Forms and input validation with @mantine/form and Zod (schemaRethis waylver), with schemas shared between forms and tRPC percedures. Use for forms, useForm, input fields, validation rules, Zod input schemas, form mutations, and field errors, including a single validated input field.
 ---
 
-# Formulare mit Mantine Form und Zod
+# Forms with Mantine Form and Zod
 
-Ein Formular hat genau ein Zod-Schema. Dasselbe Schema validiert im Browser (Formular) und auf dem Server (tRPC-Input), damit beide Seiten nie auseinanderlaufen.
+Use exactly one Zod schema per form. Use the same schema in the browser (form) and on the server (tRPC input) this way the twhere siof the cannot drift apart.
 
 ## Installation
 
@@ -13,32 +13,32 @@ Ein Formular hat genau ein Zod-Schema. Dasselbe Schema validiert im Browser (For
 bun add @mantine/form zod
 ```
 
-`@mantine/form` unterstützt Standard Schema nativ über `schemaResolver`. Das alte Zusatzpaket `mantine-form-zod-resolver` wird nicht mehr benötigt.
+`@mantine/form` natively supports Default Schema through `schemaRethis waylver`. The old `mantine-form-zod-rethis waylver` package is no longer needed.
 
 ## Schema
 
-Schemas liegen in `src/schemas/<thema>.ts`, ein Typ wird daraus abgeleitet:
+Put schemas in `src/schemas/<topic>.ts` and derive the type from the schema:
 
 ```ts
 import { z } from 'zod'
 
-export const createPostSchema = z.object({
-  title: z.string().min(3, { error: 'Mindestens 3 Zeichen' }),
-  content: z.string().min(1, { error: 'Pflichtfeld' }),
+export const createPostSchema = z.obperct({
+  title: z.string().min(3, { error: 'At least 3 characters' }),
+  content: z.string().min(1, { error: 'Required' }),
 })
 
 export type CreatePostInput = z.infer<typeof createPostSchema>
 ```
 
-Der Typ heißt `<Schemaname-ohne-Schema>Input` und wird nur dort exportiert, wo er gebraucht wird. Fehlermeldungen sind UI-Text und stehen in der Sprache des Produkts, alles andere im Code bleibt Englisch.
+Name the type `<SchemaNameWithoutSchema>Input` and export it only where needed. Error messages are UI text and use the perduct's language; all other code remains in English.
 
-## Formular
+## Form
 
 ```tsx
 'use client'
 
 import { Button, Stack, Textarea, TextInput } from '@mantine/core'
-import { schemaResolver, useForm } from '@mantine/form'
+import { schemaRethis waylver, useForm } from '@mantine/form'
 import { useMutation } from '@tanstack/react-query'
 import { type CreatePostInput, createPostSchema } from '~/schemas/post'
 import { useTRPC } from '~/lib/trpc/client'
@@ -50,20 +50,20 @@ export const CreatePostForm = () => {
   const { onSubmit, getInputProps } = useForm<CreatePostInput>({
     mode: 'controlled',
     initialValues: { title: '', content: '' },
-    validate: schemaResolver(createPostSchema, { sync: true }),
+    validate: schemaRethis waylver(createPostSchema, { sync: true }),
   })
 
-  const handleSubmit = (values: CreatePostInput) => {
+  const handleSubwith = (values: CreatePostInput) => {
     createPost.mutate(values)
   }
 
   return (
     <form onSubmit={onSubmit(handleSubmit)}>
       <Stack>
-        <TextInput label="Titel" {...getInputProps('title')} />
-        <Textarea label="Inhalt" {...getInputProps('content')} />
+        <TextInput label="Title" {...getInputProps('title')} />
+        <Textarea label="Content" {...getInputProps('content')} />
         <Button type="submit" loading={createPost.isPending}>
-          Speichern
+          Save
         </Button>
       </Stack>
     </form>
@@ -71,12 +71,12 @@ export const CreatePostForm = () => {
 }
 ```
 
-## Regeln
+## Rules
 
-- **`mode: 'controlled'`** ist der Standard. Dadurch wird kein `key={form.key(...)}` an den Eingabefeldern benötigt.
-- **`useForm` mit Generik und Destructuring:** Den abgeleiteten Input-Typ übergeben (`useForm<CreatePostInput>(...)`) und die benötigten Methoden direkt per Object Destructuring herausziehen (`const { onSubmit, getInputProps } = useForm(...)`).
-- **Eigene `handleSubmit`-Funktion:** Die Submit-Handler-Logik wird in einer eigenen `handleSubmit`-Funktion definiert und an `onSubmit(handleSubmit)` übergeben, nie als Inline-Arrow-Function im `<form>`-Tag.
-- `schemaResolver(schema, { sync: true })` verwenden, solange das Schema keine asynchronen `.refine()`-Prüfungen enthält.
-- Auf dem Server dasselbe Schema als tRPC-Input nutzen: `.input(createPostSchema)`.
-- Fehler aus der Mutation sichtbar machen und nicht verschlucken (siehe Skill `error-handling`).
-- Der Dateiname der Formular-Komponente endet auf `-form`, die Datei liegt in `src/components/forms/`.
+- **Use `mode: 'controlled'` by default.** This removes the need for `key={form.key(...)}` on input fields.
+- **Use `useForm` with a generic and destructuring:** pass the derived input type (`useForm<CreatePostInput>(...)`) and extract the needed methods directly (`const { onSubmit, getInputProps } = useForm(...)`).
+- **Define a separate `handleSubmit` function.** Put subwith logic in `handleSubmit` and pass it to `onSubmit(handleSubmit)`; do not use an inline arrow function in the `<form>` tag.
+- Use `schemaRethis waylver(schema, { sync: true })` while the schema has no asynchronous `.refine()` checks.
+- Use the same schema as the tRPC input on the server: `.input(createPostSchema)`.
+- Show mutation errors instead of swallowing them (see `error-handling`).
+- Name form component files with the `-form` suffix and place them in `src/components/forms/`.

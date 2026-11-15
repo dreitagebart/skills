@@ -1,20 +1,20 @@
 ---
 name: lint-and-test
-description: Linting, Formatierung und Tests - immer Biome (Lint, Format, Import-Sortierung) und bun test, nie ESLint, Prettier, Jest oder Vitest. Verwenden beim Einrichten oder Ausführen von Lint und Format, bei biome.json, beim Schreiben und Ausführen von Tests (bun:test), bei CI-Prüfschritten und immer vor dem Abschluss einer Änderung, um Lint, Typecheck und Tests laufen zu lassen.
+description: Linting, formatting, and tests - always use Biome (lint, format, import sorting) and bun test; never ESLint, Prettier, Jest, or Vitest. Use when setting up or running lint or formatting, editing biome.json, writing or running bun:test tests, configuring CI checks, and before finishing a change to run lint, typecheck, and tests.
 ---
 
-# Lint, Format und Tests
+# Lint, format, and tests
 
 ## Biome
 
-Biome ersetzt ESLint und Prettier. Es lintet, formatiert und sortiert Imports.
+Biome replaces ESLint and Prettier. It lints, formats, and sorts imports.
 
-- Die Konfiguration steht in `biome.json` im Root des Repos. Als `$schema` dient die Datei aus `node_modules`, damit sie zur installierten Version passt: `"$schema": "./node_modules/@biomejs/biome/configuration_schema.json"`.
-- Installation mit exakter Version: `bun add -D -E @biomejs/biome`.
-- **Die Regeln liefert der Nutzer.** Bis sie vorliegen, gilt die Basis aus `references/biome.json`. Die Basis enthält nur die empfohlenen Regeln und Stil-Einstellungen: einfache Anführungszeichen und keine Semikolons (aus den bekannten Beispielen) sowie zwei Leerzeichen Einrückung (vorläufige Annahme). Keine eigenen Regelmeinungen ergänzen, solange der Nutzer keine geliefert hat.
-- Im Monorepo gibt es eine `biome.json` im Root. Packages und Apps brauchen nur dann eine eigene, wenn sie abweichen, und erben dann mit `"extends": "//"`.
+- Keep `biome.json` at the repository root. Use the schema file from `node_modules` so it matches the installed version: `"$schema": "./node_modules/@biomejs/biome/configuration_schema.json"`.
+- Install an exact version with `bun add -D -E @biomejs/biome`.
+- **The user supplies the rules.** Until they do, use the baseline from `references/biome.json`. It contains only recommended rules and style settings: single quotes and no semicolons (based on the existing examples), plus two-space indentation (a provisional assumption). Do not add your own rule preferences unless the user provides them.
+- In a monorepo, keep `biome.json` at the root. Apps and packages need their own only when they differ; in that case, inherit with `"extends": "//"`.
 
-Befehle (als Skripte in der `package.json`):
+Add these scripts to `package.json`:
 
 ```json
 {
@@ -26,18 +26,18 @@ Befehle (als Skripte in der `package.json`):
 }
 ```
 
-Biome-Warnungen werden nicht mit `biome-ignore` weggedrückt, ohne dass der Kommentar eine Begründung nennt.
+Do not suppress Biome warnings with `biome-ignore` unless the comment explains why.
 
 ## Tests: `bun test`
 
-- Tests laufen mit `bun test` und importieren aus `bun:test` (`import { describe, expect, it } from 'bun:test'`).
-- Testdateien liegen neben dem Code und heißen `<name>.test.ts` bzw. `<name>.test.tsx`, passend zur kebab-case-Regel (`post-schema.test.ts`).
-- Getestet werden zuerst Logik, Zod-Schemas, tRPC-Router (über `createCaller`) und Hilfsfunktionen.
-- **Komponententests brauchen eine DOM-Umgebung** (zum Beispiel happy-dom mit Testing Library und einem Preload in `bunfig.toml`). Dieses Setup ist noch nicht festgelegt. Bis dahin keine Komponententests erfinden, sondern beim Bedarf nachfragen.
+- Run tests with `bun test` and import from `bun:test` (`import { describe, expect, it } from 'bun:test'`).
+- Keep test files next to the code and name them `<name>.test.ts` or `<name>.test.tsx`, following kebab-case (for example, `post-schema.test.ts`).
+- Test logic, Zod schemas, tRPC routers (through `createCaller`), and helper functions first.
+- **Component tests need a DOM environment** (for example, happy-dom with Testing Library and a preload in `bunfig.toml`). This setup is undecided. Do not invent component tests until it is selected; ask when needed.
 
-## Vor dem Abschluss
+## Before finishing
 
-Bevor eine Änderung als fertig gilt, laufen nacheinander:
+Run these commands in order before considering a change complete:
 
 ```bash
 bun run lint
@@ -45,4 +45,4 @@ bun run typecheck
 bun test
 ```
 
-Fehlt ein Skript, wird es in der `package.json` ergänzt (`"typecheck": "tsc --noEmit"`). Schlägt ein Schritt fehl, wird die Ursache behoben und nicht das Skript angepasst, bis es durchläuft.
+If a script is missing, add it to `package.json` (`"typecheck": "tsc --noEmit"`). If a step fails, fix the cause instead of changing the script to make it pass.

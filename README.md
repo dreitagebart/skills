@@ -1,81 +1,81 @@
 # skills
 
-Coding-Richtlinien von dreitagebart als Agent Skills. Ein Skill ist ein Ordner mit einer `SKILL.md`, die ein Coding-Agent bei passender Aufgabe lädt. Dieses Repo legt Stack, Dateikonventionen, Komponentenmuster, Datenzugriff, Datenbank, Auth, Container und den Projektstart fest, damit Agenten in jedem Projekt gleich arbeiten.
+dreitagebart coding guidelines as Agent Skills. A skill is a folder containing a `SKILL.md` that a coding agent loads for relevant tasks. This repository defines the stack, file conventions, component patterns, data access, database, auth, containers, and project setup so agents work consistently across projects.
 
-Status: Version 0.1.0. Offene Punkte und Prüfstand stehen in [ROADMAP.md](ROADMAP.md).
+Status: version 0.1.0. Open items and verification status are in [ROADMAP.md](ROADMAP.md).
 
 ## Installation
 
-Alles installieren, global für alle Projekte:
+Install everything globally for all projects:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --all -g
+npx skills add https://codeberg.org/dreitagebart/skills.git --all -g
 ```
 
-Einzelne Skills, nur im aktuellen Projekt:
+Install selected skills in the current project only:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --skill file-conventions --skill react-components
+npx skills add https://codeberg.org/dreitagebart/skills.git --skill file-conventions --skill react-components
 ```
 
-Erst ansehen, was enthalten ist:
+Preview the available skills:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --list
+npx skills add https://codeberg.org/dreitagebart/skills.git --list
 ```
 
-Aktualisieren mit `npx skills update`.
+Update with `npx skills update`.
 
-> `new-project` verweist auf Dateien anderer Skills dieses Repos und funktioniert nur vollständig, wenn alle Skills installiert sind. Im Zweifel `--all` verwenden.
+> `new-project` references files from other skills in this repository and only works fully when all skills are installed. Use `--all` if in doubt.
 
-Danach im Projekt einmal den Skill `setup-dreitagebart-skills` aufrufen. Er schreibt einen kurzen Kernregeln-Block in die `AGENTS.md`, damit die immer gültigen Regeln auch dann greifen, wenn ein Skill nicht automatisch geladen wird.
+Then invoke the `setup-dreitagebart-skills` skill once in the project. It adds a short core-rules block to `AGENTS.md` so the always-applicable rules remain available even when a skill is not loaded automatically.
 
 ## Skills
 
-| Skill | Inhalt |
+| Skill | Contents |
 |---|---|
-| `stack` | Techstack mit Verboten und Alternativen |
-| `file-conventions` | kebab-case, `src/`-Struktur, `index.ts`-Barrels, `~`-Alias |
-| `react-components` | Komponentenmuster, Props-Typen, Mantine-Setup, Styling |
-| `forms` | Mantine Form mit Zod, Schemas geteilt mit tRPC |
-| `data-fetching` | tRPC v11, SSR-Prefetch, `HydrationBoundary` |
-| `database` | Prisma 7 mit PostgreSQL |
-| `auth` | better-auth mit Prisma-Adapter und Next.js |
-| `runtime-and-languages` | Bun, TypeScript, kein Python, Go |
-| `code-style` | Englisch im Code, Named Exports, Zod an Grenzen, Env-Validierung |
-| `lint-and-test` | Biome und `bun test` |
-| `error-handling` | Fehlerbehandlung und Logging |
-| `containers` | `Containerfile`, `compose.yml`, Basisimages |
-| `monorepo` | Turborepo, Namensschema `@<projekt>/...` |
-| `new-project` | Scaffold nach den Konventionen |
-| `setup-dreitagebart-skills` | Kernregeln in die `AGENTS.md` eintragen |
+| `stack` | Tech stack, prohibitions, and alternatives |
+| `file-conventions` | kebab-case, `src/` structure, `index.ts` barrels, `~` alias |
+| `react-components` | Component patterns, props types, Mantine setup, styling |
+| `forms` | Mantine Form with Zod, schemas shared with tRPC |
+| `data-fetching` | tRPC v11, SSR prefetch, `HydrationBoundary` |
+| `database` | Prisma 7 with PostgreSQL |
+| `auth` | better-auth with Prisma adapter and Next.js |
+| `runtime-and-languages` | Bun, TypeScript, no Python, Go |
+| `code-style` | English in code, named exports, Zod at boundaries, env validation |
+| `lint-and-test` | Biome and `bun test` |
+| `error-handling` | Error handling and logging |
+| `containers` | `Containerfile`, `compose.yml`, base images |
+| `monorepo` | Turborepo, naming scheme `@<project>/...` |
+| `new-project` | Scaffold following the conventions |
+| `setup-dreitagebart-skills` | Add core rules to `AGENTS.md` |
 
-Empfehlungen für Skills anderer Autoren (zum Beispiel `grill-with-docs`, `archify`): [docs/recommended-skills.md](docs/recommended-skills.md).
+Recommendations for skills by other authors (for example `grill-with-docs`, `archify`): [docs/recommended-skills.md](docs/recommended-skills.md).
 
-## Aufbau
+## Structure
 
 ```
 skills/
-├── skills/<name>/SKILL.md       # ein Skill, bei Bedarf mit references/ und assets/
-├── drafts/                      # Entwürfe, werden nicht installiert
-├── docs/                        # Dokumentation für Menschen
-├── scripts/validate-skills.ts   # Prüfskript
-├── AGENTS.md                    # Regeln fürs Schreiben von Skills in diesem Repo
+├── skills/<name>/SKILL.md       # a skill, with optional references/ and assets/
+├── drafts/                      # drafts, not installed
+├── docs/                        # documentation for people
+├── scripts/validate-skills.ts   # validation script
+├── AGENTS.md                    # rules for writing skills in this repository
 └── ROADMAP.md
 ```
 
-Der Fließtext ist Deutsch. Fachbegriffe, Bezeichner, Code und Code-Kommentare sind Englisch.
+Prose is in English. Technical terms, identifiers, code, and code comments are also in English.
 
-## Entwickeln
+## Development
 
-Das Repo hat keine Abhängigkeiten. Voraussetzung ist Bun.
+This repository has no dependencies. Bun is required.
 
 ```bash
 bun run validate
 ```
 
-Das Skript prüft Frontmatter, Namen, Längenlimits und Dateiverweise. Regeln für neue Skills stehen in [AGENTS.md](AGENTS.md).
+The script checks frontmatter, names, length limits, and file references. See [AGENTS.md](AGENTS.md) for rules on adding skills.
 
-## Lizenz
+## License
 
-MIT, siehe [LICENSE](LICENSE).
+MIT; see [LICENSE](LICENSE).

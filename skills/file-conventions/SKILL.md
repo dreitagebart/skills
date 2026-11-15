@@ -1,28 +1,32 @@
 ---
 name: file-conventions
-description: Datei- und Ordnerkonventionen von dreitagebart - alles klein mit Bindestrich (kebab-case wie bei Next.js), src-Struktur mit Gruppenordnern unter components, index.ts-Barrels mit export *, Import-Alias ~ auf src. Verwenden beim Anlegen, Umbenennen oder Verschieben von Dateien und Ordnern, bei Imports, tsconfig-Paths, Barrel-Dateien (index.ts), CSS-Modules und types.ts - auch bei kleinen Änderungen, weil Benennung überall konsistent sein muss.
+description: dreitagebart file and folder conventions - lowercase kebab-case as in Next.js, a src structure with group folders under components, index.ts barrels with export *, and a ~ import alias for src. Use when creating, renaming, or moving files and folders, working with imports, tsconfig paths, barrel files (index.ts), CSS Modules, or types.ts, including small changes, to keep naming consistent.
 ---
 
-# Datei- und Ordnerkonventionen
+# File and folder conventions
 
 ## Benennung
 
-Alle Datei- und Ordnernamen sind klein geschrieben, Wörter werden mit Bindestrich getrennt (kebab-case), wie bei Next.js: `basic-button.tsx`, `user-settings/`, `app-router.ts`.
+Use lowercase for all file and folder names and separate words with hyphens (kebab-case), as in Next.js: `basic-button.tsx`, `user-settings/`, `app-router.ts`.
 
-- Keine Großbuchstaben und keine Unterstriche in selbst vergebenen Namen.
-- Die Namen im Code bleiben davon unberührt: Die Datei `basic-button.tsx` exportiert `BasicButton`.
-- Ausnahmen sind herkömmliche Dateinamen und Frameworkvorgaben: `Containerfile`, `README.md`, `LICENSE`, `AGENTS.md`, `CLAUDE.md`, `SKILL.md` sowie Next.js-Spezialdateien (`page.tsx`, `layout.tsx`, `route.ts`, `[id]`, `(gruppe)`).
+- Do not use uppercase letters or underscores in custom names.
+- Code names are unaffected: `basic-button.tsx` exports `BasicButton`.
+- Exceptions are conventional filenames and framework requirements: `Containerfile`, `README.md`, `LICENSE`, `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, and Next.js special files (`page.tsx`, `layout.tsx`, `route.ts`, `[id]`, `(group)`).
 
-## Struktur unter `src/`
+## Structure under `src/`
 
 ```
 src/
 ├── app/                         # Next.js App Router
+├── styles/                      # app-wide fonts, Mantine theme, and global CSS
+│   ├── fonts.ts
+│   ├── globals.css
+│   └── theme.ts
 ├── components/
-│   ├── buttons/                 # Gruppe (Thema)
+│   ├── buttons/                 # group (topic)
 │   │   ├── basic-button.tsx
 │   │   ├── basic-button.module.css
-│   │   ├── types.ts             # optional, themenbezogen
+│   │   ├── types.ts             # optional, topic-specific
 │   │   └── index.ts             # export * from './basic-button'
 │   └── forms/
 │       ├── login-form.tsx
@@ -30,26 +34,29 @@ src/
 ├── views/
 │   ├── dashboard-view.tsx       # dashboard view for /app/dashboard/page.tsx
 |   └── posts-view.tsx           # posts view for /app/posts/page.tsx
-├── schemas/                     # Zod-Schemas, von Formularen und tRPC geteilt
+├── schemas/                     # Zod schemas shared by forms and tRPC
 ├── lib/
 │   ├── trpc/
 |   └── prisma.ts                # prisma client
+|   └── auth.ts                  # better auth instance
+|   └── auth-client.ts           # better auth client
 └── env.ts
 ```
 
-- Unter `src/components/` liegt ein Ordner pro Gruppe, also pro Thema wie `buttons`, `forms` oder `layout`. In jeder Gruppe liegen die Komponenten als Dateien (`basic-button.tsx`), dazu eine `index.ts` im Root des Gruppenordners.
-- Eine Gruppe darf weitere Dateien enthalten, zum Beispiel `*.module.css` oder eine `types.ts` für das Thema.
-- Unter `src/views/` liegen die seitenbezogenen Hauptansichten (`<seite>-view.tsx`), die eine komplette Route zusammensetzen und Komponenten aus `src/components/` einbinden.
-- Die Dateien unter `src/app/` (`page.tsx`) bleiben dadurch schlank: Sie kümmern sich nur um Routing, Params, Metadata sowie initiales Server-Data-Fetching und rendern die passende View.
-- Wenn eine View größer wird oder eigene Unterkomponenten, Styles (`*.module.css`) oder Hilfsdateien braucht, die nur für diese eine Seite gedacht sind, bekommt sie unter `src/views/<seite>/` einen eigenen Unterordner.
+- Put one folder per group (topic) under `src/components/`, such as `buttons`, `forms`, or `layout`. Each group contains component files (for example `basic-button.tsx`) and an `index.ts` at the group root.
+- Put app-wide font definitions, the Mantine theme, and global CSS in `src/styles/`. Keep `globals.css` there rather than in `src/app/`; import it from the root layout.
+- A group may also contain files such as `*.module.css` or a topic-specific `types.ts`.
+- Put page-specific main views (`<page>-view.tsx`) under `src/views/`. Each view assembles a complete route and includes components from `src/components/`.
+- Keep files under `src/app/` (`page.tsx`) lean: they handle routing, params, metadata, and initial server-side data fetching, then render the appropriate view.
+- If a view grows or needs subcomponents, styles (`*.module.css`), or helper files used only by that page, give it a dedicated subfolder under `src/views/<page>/`.
 
 
-## Next.js `page.tsx` und `layout.tsx`
+## Next.js `page.tsx` and `layout.tsx`
 
-Seiten und Layouts werden immer als `async` Arrow-Function-Konstante (`Page` bzw. `Layout`) definiert und am Ende per `export default` exportiert.
+Always define pages and layouts as `async` arrow-function constants (`Page` or `Layout`) and export them at the end with `export default`.
 
-- **`page.tsx`:** Rendert ausschließlich die zugehörige View-Komponente aus `~/views/...` (ggf. mit geladenen Daten oder aufgelösten Route-Params).
-- **`layout.tsx`:** Typisiert die Props über `type Props` (mindestens `children: React.ReactNode`) und umschließt `children` mit der entsprechenden Layout-Komponente.
+- **`page.tsx`:** Render only its corresponding view component from `~/views/...` (optionally with fetched data or resolved route params).
+- **`layout.tsx`:** Type props with `type Props` (at least `children: React.ReactNode`) and wrap `children` with the appropriate layout component.
 
 ```tsx
 // src/app/dashboard/page.tsx
@@ -96,22 +103,22 @@ export default Layout
 ```
 
 
-## Barrel-Dateien (`index.ts`)
+## Barrel files (`index.ts`)
 
-Die `index.ts` einer Gruppe enthält nur `export *`-Zeilen, eine pro öffentliche Datei, ohne Dateiendung und alphabetisch sortiert:
+The `index.ts` in a group contains only `export *` lines, one per public file, without file extensions and sorted alphabetically:
 
 ```ts
 export * from './basic-button'
 export * from './icon-button'
 ```
 
-- **Nur das öffentliche API wird exportiert.** `*.module.css`, interne Hilfsdateien und Tests stehen nicht in der `index.ts`. `types.ts` wird nur exportiert, wenn die Typen nach außen gehören.
-- **Kein Sammel-Barrel über alle Gruppen** (also keine `src/components/index.ts`, die jede Gruppe re-exportiert). Ein Barrel pro Gruppe ist klein und unkritisch. Ein großes bremst Dev-Builds und vermischt Client- und Server-Komponenten.
-- Importiert wird über die Gruppe: `import { BasicButton } from '~/components/buttons'`.
+- **Export only the public API.** Do not put `*.module.css`, internal helpers, or tests in `index.ts`. Export `types.ts` only when its types are part of the public API.
+- **Do not create one barrel for all groups** (that is, no `src/components/index.ts` re-exporting every group). A barrel per group stays small and harmless. A large one slows dev builds and mixes client and server components.
+- Import through the group: `import { BasicButton } from '~/components/buttons'`.
 
 ## Import-Alias `~`
 
-`~` zeigt auf `src/`. Das gehört in jede `tsconfig.json`:
+`~` points to `src/`. Add this to every `tsconfig.json`:
 
 ```json
 {
@@ -123,6 +130,6 @@ export * from './icon-button'
 }
 ```
 
-- Innerhalb von `src/` wird mit `~/...` importiert. Relative Imports (`./basic-button`) sind nur für Dateien im selben Ordner erlaubt, nie `../..`.
-- Im Monorepo gilt `~` pro App und pro Package für dessen eigenes `src/`.
-- Bei `create-next-app` den Alias mit `--import-alias "~/*"` setzen.
+- Within `src/`, use `~/...` imports. Relative imports (`./basic-button`) are allowed only between files in the same folder; never use `../..`.
+- In a monorepo, `~` points to each app's or package's own `src/`.
+- Set the alias with `--import-alias "~/*"` when running `create-next-app`.

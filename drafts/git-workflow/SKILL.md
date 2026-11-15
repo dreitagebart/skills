@@ -1,22 +1,22 @@
 ---
 name: git-workflow
-description: PLATZHALTER - Git-Konventionen (Branches, Commits, Pull Requests, Releases). Noch keine Regeln definiert; dieser Entwurf liegt in drafts/ und wird nicht mit installiert.
+description: PLACEHOLDER - Git conventions (branches, commits, pull requests, releases). No rules have been defined yet; this draft lives in drafts/ and is not installed.
 ---
 
-# Git-Workflow (Platzhalter)
+# Git workflow (placeholder)
 
-Dieser Skill ist noch leer. Er liegt absichtlich in `drafts/` und nicht in `skills/`, damit `npx skills add` ihn nicht mitinstalliert und kein Agent erfundene Regeln befolgt.
+This skill is still empty. It intentionally lives in `drafts/`, not `skills/`, so `npx skills add` does not install it and agents do not follow invented rules.
 
-## Zu definieren
+## To define
 
-- Branch-Modell und Branch-Namen
-- Commit-Nachrichten (zum Beispiel Conventional Commits, Sprache)
-- Pull-Request-Ablauf und Review
-- Releases, Tags und Changelog
-- Geschützte Branches
+- Branch model and branch names
+- Commit messages (for example Conventional Commits, language)
+- Pull request workflow and review
+- Releases, tags, and changelog
+- Protected branches
 
-## Aktivieren
+## Activate
 
-1. Regeln in diesem Dokument ergänzen, den Platzhalter-Text und den Hinweis in der `description` entfernen.
-2. Den Ordner nach `skills/git-workflow/` verschieben.
-3. `bun run validate` ausführen.
+1. Add rules to this document and remove the placeholder text and note from the `description`.
+2. Move the folder to `skills/git-workflow/`.
+3. Run `bun run validate`.

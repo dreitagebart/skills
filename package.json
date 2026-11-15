@@ -1,7 +1,7 @@
 {
   "name": "@dreitagebart/skills",
   "version": "0.1.0",
-  "description": "Coding-Richtlinien von dreitagebart als Agent Skills (SKILL.md), installierbar mit `npx skills add`.",
+  "description": "dreitagebart coding guidelines as Agent Skills (SKILL.md), installable with `npx skills add`.",
   "private": true,
   "license": "MIT",
   "type": "module",

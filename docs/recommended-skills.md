@@ -1,61 +1,61 @@
-# Empfohlene Skills von anderen
+# Recommended skills by other authors
 
-Stand: 14. November 2026. Diese Skills stammen nicht aus diesem Repo. Die Auswahl beruht auf Installationszahlen und Katalogbeschreibungen, nicht auf eigenem Test in deinen Projekten. Installationszahlen sind teilweise ein Verteilungseffekt (Skills, die in anderen Paketen mitgeliefert werden, zählen mit), also nur ein grober Hinweis.
+As of November 14, 2026. These skills are not from this repository. The selection is based on installation counts and catalog descriptions, not on testing them in your projects. Installation counts are partly affected by distribution (skills bundled with other packages are counted too), so treat them as a rough signal only.
 
-**Vor jeder Installation den Quelltext lesen.** Skills laufen mit den Rechten des Agenten. Die `skills`-CLI weist beim Installieren selbst darauf hin.
+**Read the source before every installation.** Skills run with the agent's permissions. The `skills` CLI says this during installation too.
 
-## Die Skills, die du schon magst
+## Skills you already like
 
 ### grill-with-docs (mattpocock)
 
-Ein hartnäckiges Interview, das einen Plan oder Entwurf Punkt für Punkt prüft, die Begriffe schärft und dabei Dokumentation mitschreibt (laut Beschreibung `CONTEXT.md` und ADRs). Sinnvoll vor dem Coden, wenn unklare Begriffe sonst zu falsch gebauten Features führen. Laut Katalogbeschreibung ruft der Skill intern die Skills `grilling` und `domain-modeling` auf.
+A persistent interview that examines a plan or draft point by point, sharpens terminology, and writes documentation along the way (according to its description, `CONTEXT.md` and ADRs). Useful before coding when unclear terms could lead to incorrectly built features. The catalog description says the skill internally invokes `grilling` and `domain-modeling`.
 
 ```bash
-# nur der Skill (Abhängigkeiten prüfen, siehe unten)
+# the skill only (check dependencies below)
 npx skills add mattpocock/skills --skill grill-with-docs
 
-# oder das ganze Repo
+# or the entire repository
 npx skills add mattpocock/skills
 ```
 
-Mit `--list` vorher nachsehen, wie die Hilfs-Skills heißen, und sie mit `--skill` zusätzlich angeben. Ohne sie läuft der Skill womöglich nur eingeschränkt.
+Use `--list` first to see the helper skill names and add them with `--skill`. Without them, this skill may work only partially.
 
 ### archify (tt-a1i)
 
-Macht aus einer Beschreibung oder aus Code ein Architektur-, Ablauf-, Sequenz- oder Datenfluss-Diagramm als eine selbstständige, interaktive HTML-Datei. Danach lässt sich im Gespräch nachschärfen ("Redis hinzufügen", "Auth nach links"). Laut README für Claude Code, Codex CLI und opencode gedacht, MIT-lizenziert.
+Turns a description or code into an architecture, flow, sequence, or data-flow diagram as a standalone interactive HTML file. Refine it in conversation afterwards ("add Redis", "move auth to the left"). According to its README, it is intended for Claude Code, Codex CLI, and opencode, and is MIT-licensed.
 
 ```bash
 npx skills add tt-a1i/archify -g
 ```
 
-Der Skill bringt einen eigenen Renderer mit, der nach Beschreibung im Projekt-README auf Node.js-Zugriff angewiesen sein kann. Das betrifft nur das Werkzeug, nicht deinen Projektcode, kollidiert aber mit der Regel "Bun statt Node". Beim ersten Einsatz prüfen.
+The skill includes its own renderer, which may require Node.js access according to the project README. This affects the tool, not your project code, but conflicts with the "Bun instead of Node" rule. Check during first use.
 
-## Weitere beliebte Skills
+## Other popular skills
 
-| Skill | Quelle | Wofür | Hinweis |
+| Skill | Source | Purpose | Note |
 |---|---|---|---|
-| `grill-me` | mattpocock/skills | Interview vor dem Coden ohne Dokumentation | Schlankere Variante von `grill-with-docs` |
-| `improve-codebase-architecture` | mattpocock/skills | Architektur eines bestehenden Codebestands verbessern | Für gewachsene Projekte wie ältere Apps |
-| `tdd` | mattpocock/skills | Testgetriebene Entwicklung | Prüfen, ob die Beispiele zu `bun test` passen |
-| `diagnosing-bugs` | mattpocock/skills | Systematische Fehlersuche | Allgemein einsetzbar |
-| `setup-matt-pocock-skills` | mattpocock/skills | Richtet die Skills von Matt Pocock im Projekt ein | Auf GitHub-Workflows ausgelegt, bei Codeberg die Tracker-Option prüfen |
-| `find-skills` | vercel-labs/skills | Durchsucht die Registry mitten in der Arbeit und schlägt Skills vor | Meistinstalliert (über 4 Mio.), aber es sind Fremd-Skills, vor dem Installieren prüfen |
-| `agent-browser` | vercel-labs | Browser-Automatisierung für UI-Prüfungen | Prüfen, welche Laufzeit es verlangt |
-| `frontend-design` | anthropics | Gestalterisch eigenständige Oberflächen | Kann mit der Vorgabe "Mantine, kein eigener Stil" konkurrieren, nur gezielt aufrufen |
-| `skill-creator` | anthropics | Eigene Skills erstellen und testen | Nützlich zum Pflegen dieses Repos |
-| `write-a-skill` | mattpocock/skills | Neue Skills mit sauberer Struktur anlegen | Alternative zu `skill-creator` |
+| `grill-me` | mattpocock/skills | Interview before coding without documentation | Leaner version of `grill-with-docs` |
+| `improve-codebase-architecture` | mattpocock/skills | Improve the architecture of an existing codebase | For established projects such as older apps |
+| `tdd` | mattpocock/skills | Test-driven development | Check that examples work with `bun test` |
+| `diagnosing-bugs` | mattpocock/skills | Systematic debugging | General purpose |
+| `setup-matt-pocock-skills` | mattpocock/skills | Sets up Matt Pocock's skills in the project | Designed for GitHub workflows; check the tracker option for Codeberg |
+| `find-skills` | vercel-labs/skills | Searches the registry during work and suggests skills | Most installed (over 4 million), but these are third-party skills; inspect before installing |
+| `agent-browser` | vercel-labs | Browser automation for UI checks | Check which runtime it requires |
+| `frontend-design` | anthropics | Distinctive interface design | May conflict with "Mantine, no custom style"; invoke selectively |
+| `skill-creator` | anthropics | Create and test custom skills | Useful for maintaining this repository |
+| `write-a-skill` | mattpocock/skills | Create new skills with a clean structure | Alternative to `skill-creator` |
 
-## Empfohlene Reihenfolge
+## Suggested order
 
-1. `grill-with-docs` mit seinen Hilfs-Skills, weil du es schon schätzt und es zu "erst denken, dann bauen" passt.
-2. `archify` für Architekturdiagramme.
-3. Danach nach Bedarf: `diagnosing-bugs` und `improve-codebase-architecture` bei bestehenden Projekten, `tdd` zusammen mit `bun test`, `agent-browser` für UI-Prüfungen.
-4. `frontend-design` bewusst nur dann, wenn du eine gestalterisch freie Seite willst, die nicht strikt nach Mantine aussehen muss.
+1. `grill-with-docs` and its helper skills, since you already like it and it supports "think first, build second".
+2. `archify` for architecture diagrams.
+3. Then as needed: `diagnosing-bugs` and `improve-codebase-architecture` for existing projects, `tdd` with `bun test`, and `agent-browser` for UI checks.
+4. Use `frontend-design` selectively when you want a visually unconstrained page that does not need to follow Mantine closely.
 
-## Skills auf Codeberg verteilen
+## Distributing skills on Codeberg
 
-Die Kurzform `owner/repo` steht in der `skills`-CLI für GitHub. Für Skills von Codeberg die volle URL angeben, so wie bei diesem Repo:
+The shorthand `owner/repo` in the `skills` CLI refers to GitHub. For skills on Codeberg, provide the full URL as with this repository:
 
 ```bash
-npx skills add https://codeberg.org/dreitagebart/skills --all
+npx skills add https://codeberg.org/dreitagebart/skills.git --all
 ```

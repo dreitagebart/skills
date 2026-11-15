@@ -1,16 +1,16 @@
 ---
 name: react-components
-description: React-Komponentenkonventionen von dreitagebart mit Mantine - export const mit Pfeilfunktion, Props-Typen (type Props, exportiert als <Name>Props), CSS Modules statt Tailwind, Client/Server-Grenzen, Mantine-Setup im Next.js App Router. Verwenden beim Anlegen oder Ändern von React- und Next.js-Komponenten, Props-Typen, Layouts, UI-Code, Mantine-Komponenten und Styling.
+description: dreitagebart React component conventions with Mantine - export const arrow functions, props types (type Props, exported as <Name>Props), CSS Modules instead of Tailwind, client/server boundaries, and Mantine setup in the Next.js App Router. Use when creating or changing React or Next.js components, props types, layouts, UI code, Mantine components, or styling.
 ---
 
-# React-Komponenten mit Mantine
+# React components with Mantine
 
 ## Komponentenmuster
 
-- Komponenten sind immer `export const` mit Pfeilfunktion und benanntem Export, nie `function`-Deklarationen und nie Default-Export.
-- Der Props-Typ heißt lokal `Props`. Muss er exportiert werden, heißt er `<Komponentenname>Props`.
-- `children` wird mit `ReactNode` typisiert, importiert als `import type { ReactNode } from 'react'`.
-- Eine Komponente pro Datei. Datei- und Ordnerlage steht im Skill `file-conventions`.
+- Always define components as `export const` arrow functions with named exports, never as `function` declarations or default exports.
+- Name the local props type `Props`. If it must be exported, name it `<ComponentName>Props`.
+- Type `children` as `ReactNode`, imported with `import type { ReactNode } from 'react'`.
+- Put one component in each file. See `file-conventions` for file and folder placement.
 
 Lokaler Props-Typ:
 
@@ -26,7 +26,7 @@ export const Card = ({ children }: Props) => {
 }
 ```
 
-Exportierter Props-Typ (wenn andere Dateien ihn brauchen):
+Exported props type (when needed by other files):
 
 ```tsx
 import type { ReactNode } from 'react'
@@ -42,25 +42,25 @@ export const BasicButton = ({ children }: BasicButtonProps) => {
 }
 ```
 
-Dazu in der Gruppen-`index.ts`: `export * from './basic-button'`. Das CSS-Modul wird nicht exportiert.
+In the group `index.ts`, add `export * from './basic-button'`. Do not export the CSS module.
 
-## Ausnahmen vom Default-Export-Verbot
+## Exceptions to the default export rule
 
-Next.js verlangt Default-Exports für `page.tsx`, `layout.tsx`, `error.tsx`, `loading.tsx`, `not-found.tsx` sowie für Konfigurationsdateien. Dort ist `export default` richtig. Die Komponente bleibt eine Pfeilfunktion und wird danach mit `export default` exportiert.
+Next.js requires default exports for `page.tsx`, `layout.tsx`, `error.tsx`, `loading.tsx`, `not-found.tsx`, and configuration files. Use `export default` in those files. Keep the component as an arrow function, then export it with `export default`.
 
 ## Styling
 
-- Mantine-Komponenten und ihre Style-Props (`mt`, `p`, `c`, `bg` und so weiter) sind die erste Wahl.
-- Eigene Styles kommen in CSS Modules (`basic-button.module.css`) neben die Komponente und werden mit `import classes from './basic-button.module.css'` genutzt. `postcss-preset-mantine` stellt Mixins wie `@mixin hover` und `light-dark()` bereit.
-- Kein Tailwind, keine Inline-Style-Objekte als Dauerlösung, kein CSS-in-JS zur Laufzeit. Mantine liefert seit Version 7 CSS-basierte Styles, die mit dem App Router gut funktionieren.
+- Prefer Mantine components and their style props (`mt`, `p`, `c`, `bg`, and so on).
+- Put custom styles in a CSS Module (`basic-button.module.css`) next to the component and import them with `import classes from './basic-button.module.css'`. `postcss-preset-mantine` provides mixins such as `@mixin hover` and `light-dark()`.
+- Do not use Tailwind, inline style objects as a long-term solution, or runtime CSS-in-JS. Since version 7, Mantine provides CSS-based styles that work well with the App Router.
 
-## Client und Server
+## Client and server
 
-- Komponenten sind standardmäßig Server-Komponenten. `'use client'` steht nur in Dateien, die Hooks, Event-Handler oder Browser-APIs brauchen, und zwar in der ersten Zeile der Datei.
-- Mantine-Hooks und Komponenten mit Dot-Notation (`Tabs.Panel`) brauchen in Server-Komponenten Sonderbehandlung. Bei Fehlern das Mantine Help Center zu Server Components lesen (`help.mantine.dev/q/server-components`).
-- Datenzugriff folgt dem Skill `data-fetching`: möglichst auf dem Server laden und per `HydrationBoundary` an Client-Komponenten übergeben.
+- Components are Server Components by default. Put `'use client'` on the first line only in files that need hooks, event handlers, or browser APIs.
+- Mantine hooks and dot-notation components (`Tabs.Panel`) need special handling in Server Components. If errors occur, read Mantine's Server Components help page (`help.mantine.dev/q/server-components`).
+- Follow `data-fetching`: load data on the server where possible and pass it to Client Components with `HydrationBoundary`.
 
-## Mantine-Setup im App Router
+## Mantine setup in the App Router
 
 Installation:
 
@@ -69,7 +69,7 @@ bun add @mantine/core @mantine/hooks
 bun add -D postcss postcss-preset-mantine postcss-simple-vars
 ```
 
-`postcss.config.ts` im Root der App:
+Place `postcss.config.ts` at the app root:
 
 ```js
 export default {
@@ -88,13 +88,16 @@ export default {
 }
 ```
 
-`src/app/layout.tsx`:
+In `src/app/layout.tsx`:
 
 ```tsx
 import '@mantine/core/styles.css'
+import '~/styles/globals.css'
 
 import type { ReactNode } from 'react'
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core'
+import { defaultFont, headingFont } from '~/styles/fonts'
+import { theme } from '~/styles/theme'
 
 type Props = {
   children: ReactNode
@@ -102,12 +105,12 @@ type Props = {
 
 const Layout = ({ children }: Props) => {
   return (
-    <html lang="de" {...mantineHtmlProps}>
+    <html lang="en" {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript />
       </head>
-      <body>
-        <MantineProvider>{children}</MantineProvider>
+      <body className={`${defaultFont.variable} ${headingFont.variable}`}>
+        <MantineProvider theme={theme}>{children}</MantineProvider>
       </body>
     </html>
   )
@@ -116,6 +119,14 @@ const Layout = ({ children }: Props) => {
 export default Layout
 ```
 
-- Jedes weitere Mantine-Paket (`@mantine/dates`, `@mantine/notifications`) braucht zusätzlich seinen eigenen Style-Import.
-- Provider von tRPC und TanStack Query kommen innerhalb des `MantineProvider` in den Layout-Baum (siehe Skill `data-fetching`).
-- Laut Mantine-Guide hilft `experimental.optimizePackageImports: ['@mantine/core', '@mantine/hooks']` in `next.config.ts` beim Tree-Shaking. Prüfen, ob die verwendete Mantine- und Next.js-Version das schon von selbst erledigt.
+### Global styles, fonts, and theme
+
+- Keep app-wide styles in `src/styles/`: define `defaultFont` and `headingFont` as named exports in `fonts.ts`, export the Mantine theme as `theme` from `theme.ts`, and put global CSS in `globals.css`.
+- Load fonts with `next/font` in `fonts.ts`. Give each font a CSS variable and apply those variables to the root `<body>` in `app/layout.tsx`.
+- Define the theme with Mantine's `createTheme` in `theme.ts`. It may import the font definitions from `fonts.ts`; set `fontFamily` and `headings.fontFamily` to the corresponding CSS variables.
+- Import `globals.css` from the root `app/layout.tsx`, and pass the named `theme` export to `MantineProvider` through its `theme` prop.
+- Keep the Mantine core stylesheet import before `globals.css` so app-wide CSS can override Mantine defaults when needed.
+
+- Each additional Mantine package (`@mantine/dates`, `@mantine/notifications`) needs its own style import.
+- Place tRPC and TanStack Query providers inside `MantineProvider` in the layout tree (see `data-fetching`).
+- Mantine's guide recommends `experimental.optimizePackageImports: ['@mantine/core', '@mantine/hooks']` in `next.config.ts` for tree-shaking. Check whether the installed Mantine and Next.js versions already do this automatically.

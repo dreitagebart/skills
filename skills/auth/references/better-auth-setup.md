@@ -1,16 +1,16 @@
-# better-auth Setup mit Next.js, Prisma und PostgreSQL
+# better-auth setup with Next.js, Prisma, and PostgreSQL
 
-Quellen: better-auth-Dokumentation und aktuelle Next.js-Anleitungen (Stand November 2026). Vor dem Einsatz mit der aktuellen Doku abgleichen, besonders bei Plugins und CLI-Optionen.
+Sources: better-auth documentation and current Next.js guides (as of November 2026). Compare with the current documentation before use, especially for plugins and CLI options.
 
-## Inhalt
+## Contents
 
 1. Installation
 2. `src/lib/auth.ts`
 3. `src/lib/auth-client.ts`
-4. Route-Handler
-5. Session in Server-Komponenten
+4. Route handler
+5. Session in Server Components
 6. `src/proxy.ts`
-7. Login-Aufrufe im Client
+7. Client login calls
 
 ## 1. Installation
 
@@ -18,7 +18,7 @@ Quellen: better-auth-Dokumentation und aktuelle Next.js-Anleitungen (Stand Novem
 bun add better-auth
 ```
 
-Die Auth-CLI wird ohne Installation per `bunx @better-auth/cli@latest ...` aufgerufen.
+Run the auth CLI without installing it using `bunx @better-auth/cli@latest ...`.
 
 ## 2. `src/lib/auth.ts`
 
@@ -40,7 +40,7 @@ export const auth = betterAuth({
 export type Session = typeof auth.$Infer.Session
 ```
 
-Secret und URL kommen aus `BETTER_AUTH_SECRET` und `BETTER_AUTH_URL`. better-auth liest beide aus der Umgebung, sie werden trotzdem in `src/env.ts` validiert.
+The secret and URL come from `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`. better-auth reads both from the environment, but validate them in `src/env.ts` as well.
 
 ## 3. `src/lib/auth-client.ts`
 
@@ -50,7 +50,7 @@ import { createAuthClient } from 'better-auth/react'
 export const { useSession, signIn, updateUser } = createAuthClient()
 ```
 
-Laufen Client und Server unter derselben Domain, ist keine `baseURL` nötig. Für getrennte Domains `createAuthClient({ baseURL: ... })` setzen.
+If the client and server use the same domain, `baseURL` is not needed. For separate domains, set `createAuthClient({ baseURL: ... })`.
 
 ## 4. `src/app/api/auth/[...all]/route.ts`
 
@@ -61,7 +61,7 @@ import { auth } from '~/lib/auth'
 export const { GET, POST } = toNextJsHandler(auth)
 ```
 
-## 5. Session in Server-Komponenten
+## 5. Session in Server Components
 
 ```tsx
 import { headers } from 'next/headers'
@@ -75,7 +75,7 @@ const Page = async () => {
     return redirect('/login')
   }
 
-  return <div>Hallo {session.user.name}</div>
+  return <div>Hello {session.user.name}</div>
 }
 
 export default Page
@@ -101,11 +101,11 @@ export const config = {
 }
 ```
 
-Hier keine Datenbankzugriffe: Die Datei läuft bei jedem passenden Request, auch bei Prefetches. Berechtigungen werden in Procedures und Server-Komponenten geprüft.
+Do not access the database here: this file runs for every matching request, including prefetches. Check authorization in procedures and Server Components.
 
-Bei Next.js 16 verlangt die Datei möglicherweise einen benannten oder Default-Export je nach Version. Das gegen die Next.js-Doku prüfen.
+Depending on the Next.js 16 version, the file may require a named or default export. Check the Next.js documentation.
 
-## 7. Login-Aufrufe im Client
+## 7. Client login calls
 
 ```ts
 import { signIn, signUp, signOut } from '~/lib/auth-client'
@@ -115,4 +115,4 @@ await signUp.email({ email, password, name })
 await signOut()
 ```
 
-`useSession()` liefert die Session als Hook in Client-Komponenten.
+`useSession()` provides the session as a hook in Client Components.
