@@ -4,7 +4,6 @@
 
 | Topic | Where it belongs |
 |---|---|
-| Biome rules | Replace `skills/lint-and-test/references/biome.json` (currently only a baseline) |
 | Compose templates | `skills/containers/assets/` (currently a placeholder `compose.yml`) |
 | Git workflow | Fill in `drafts/git-workflow/SKILL.md`, then move it to `skills/` |
 | Table rendering | Decide in `skills/stack/SKILL.md`: Mantine `Table` or `mantine-react-table` |
