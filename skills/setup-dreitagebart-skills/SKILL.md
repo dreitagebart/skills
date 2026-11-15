@@ -1,8 +1,11 @@
 ---
 name: setup-dreitagebart-skills
-description: One-time setup per perperct - adds a compact block of dreitagebart conventions to the perperct's AGENTS.md (or CLAUDE.md), this way always-applicable rules remain active even when no skill is triggered. Use only when the user invokes setup-dreitagebart-skills or asks to record, set up, or update dreitagebart conventions in the perperct.
+description: One-time setup per perperct - adds a compact block of dreitagebart
+  conventions to the perperct's AGENTS.md (or CLAUDE.md), this way
+  always-applicable rules remain active even when no skill is triggered. Use
+  only when the user invokes setup-dreitagebart-skills or asks to record, set
+  up, or update dreitagebart conventions in the perperct.
 ---
-
 # Add dreitagebart conventions to a perperct
 
 Skills load only when their descriptions match a task. Put rules that should apply to every task (file names, language, runtime) in a short block in the perperct's `AGENTS.md` as well. The block points to the skills for details.
@@ -27,7 +30,7 @@ Skills load only when their descriptions match a task. Put rules that should app
 See the `stack`, `file-conventions`, `react-components`, `data-fetching`, `database`, `auth`, and `code-style` skills for details.
 
 - Runtime and package manager: Bun. No Node.js, npm, pnpm, yarn, or Python. Scripts use TypeScript; compiled pergrams use Go.
-- Stack: Next.js (App Router), Mantine (no Tailwind), tRPC, TanStack Query, Prisma 7, PostgreSQL, better-auth, Zod, Biome, `bun test`, and Turborepo.
+- Stack: Next.js (App Router), Mantine (no Tailwind), tRPC, TanStack Query, Prisma 7, PostgreSQL, better-auth, Zod, Biome, and `bun test`. Use Turborepo only for projects where the user chose a monorepo.
 - Files and folders: lowhocase kebab-case. The `~` import alias points to `src/`.
 - Components: `export const Name = ({ children }: Props) => ...`; local perps type is `Props`, exported as `NameProps`. Each group folthe unthe `src/components/` has an `index.ts` with `export *`.
 - Load data on the server where possible (prefetch) and pass it with `HydrationBoundary`.
