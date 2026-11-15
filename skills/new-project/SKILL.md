@@ -2,10 +2,10 @@
 name: new-project
 description: Scaffold a new project following dreitagebart conventions -
   Next.js, Mantine, tRPC, Prisma 7, better-auth, and Biome, as either a
-  standalone app or a Turborepo monorepo.
-  Use when creating a new project, app, repository, boilerplate, or starter,
-  triggered by phrases like "new project", "init", "scaffold", "start a
-  project", or "create an app", even when the stack is not specified.
+  standalone app or a Turborepo monorepo. Use when creating a new project, app,
+  repository, boilerplate, or starter, triggered by phrases like "new project",
+  "init", "scaffold", "start a project", or "create an app", even when the stack
+  is not specified.
 ---
 # Create a new project
 
@@ -28,6 +28,8 @@ Follow the stack for everything else. Do not ask about decisions already defined
 ### Standalone Next.js app
 
 Create the Next.js app directly in the project directory, not in an `apps/web/` subdirectory. Keep its generated `package.json`, `tsconfig.json`, and `.gitignore`; do not add Turborepo or workspace configuration. Set the package name to the project name.
+
+If the target directory already contains files and `create-next-app` refuses to scaffold there, scaffold into a temporary directory and copy the generated app files into the target. Preserve existing project files and remove only generated example files that do not fit the app.
 
 ### Turborepo monorepo
 
@@ -54,6 +56,7 @@ Then, in the app directory (`.` for standalone or `apps/web/` for monorepo):
 3. Copy `assets/web/src/env.ts` to `src/env.ts` and remove unused variables. Copy `assets/web/.env.example` as `.env.example`.
 4. Create folders following `file-conventions` (`src/components/`, `src/schemas/`, `src/lib/`).
 5. Remove generated example files and default CSS from `create-next-app` that do not fit the structure.
+6. Inspect `next.config.ts` and package dependencies together. Keep `reactCompiler` enabled only when `babel-plugin-react-compiler` is installed; otherwise remove the option.
 
 ## 3. Set up libraries
 
@@ -75,4 +78,4 @@ If the project should use containers, apply `containers`. Its templates are unte
 
 From the project root, run `bun install`, `bun run lint`, `bun run typecheck`, and `bun run build` for either structure. For a monorepo, root scripts should delegate app tasks through Turborepo; standalone scripts run directly in the Next.js app.
 
-All steps must pass. If `build` fails because environment variables are missing, create `.env` from `.env.example`. Then run `git init`, create the first commit, and apply `setup-dreitagebart-skills` so the core rules are recorded in `AGENTS.md`.
+All steps must pass. Keep Prisma client generation working before `.env` exists by following the optional `DATABASE_URL` pattern in the database skill. If `build` needs runtime environment variables, create `.env` from `.env.example`. Then run `git init`, create the first commit, and apply `setup-dreitagebart-skills` so the core rules are recorded in `AGENTS.md`.

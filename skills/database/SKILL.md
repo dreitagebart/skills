@@ -1,15 +1,18 @@
 ---
 name: database
-description: Prisma ORM 7 with PostgreSQL - prisma.config.ts, prisma-client generator with required output, PrismaPg driver adapter, client singleton, and migrations with Bun. Use for database schemas, Prisma, migrations, seeds, queries, models, and ORM questions; always read before writing Prisma code from memory because Prisma 7 differs fundamentally from version 6 and earlier.
+description: Prisma ORM 7 with PostgreSQL - prisma.config.ts, prisma-client
+  generator with required output, PrismaPg driver adapter, client singleton, and
+  migrations with Bun. Use for database schemas, Prisma, migrations, seeds,
+  queries, models, and ORM questions; always read before writing Prisma code
+  from memory because Prisma 7 differs fundamentally from version 6 and earlier.
 ---
-
 # Database: Prisma 7 and PostgreSQL
 
 Always use PostgreSQL as the database and Prisma ORM version 7 as the ORM. Prisma 7 changed setup and the client compared with version 6 and earlier. Code based on Prisma 6 knowledge will not work. See the complete files in `references/prisma-setup.md`.
 
 ## Changes in Prisma 7
 
-1. **Connection in `prisma.config.ts`.** The CLI URL belongs in the config (`datasource: { url: env('DATABASE_URL') }`), no longer as `url = env(...)` in the schema's `datasource` block.
+1. **Connection in `prisma.config.ts`.** The CLI URL belongs in the config, no longer in the schema's `datasource` block. Read it as `process.env.DATABASE_URL ?? ''` so `prisma generate` and dependency installation work before `.env` exists; database commands still require a valid URL.
 2. **New `prisma-client` generator with required output.** Set `provider = "prisma-client"` and an explicit `output`. Import the client from that folder, not from `@prisma/client`.
 3. **Driver adapters are required.** For PostgreSQL, install `@prisma/adapter-pg` and `pg`, then pass the adapter to `new PrismaClient({ adapter })`.
 4. **`.env` is not loaded automatically.** Bun loads `.env` when the CLI runs as `bunx --bun prisma ...`. Without `--bun`, `prisma.config.ts` must include `import 'dotenv/config'`.

@@ -48,7 +48,7 @@ Do not put a `url` in the `datasource` block. The connection comes from `prisma.
 ## 3. `prisma.config.ts`
 
 ```ts
-import { defineConfig, env } from 'prisma/config'
+import { defineConfig } from 'prisma/config'
 
 // Bun loads .env when the CLI runs as `bunx --bun prisma ...`.
 // Without --bun, add `import 'dotenv/config'` at the top of this file.
@@ -59,7 +59,8 @@ export default defineConfig({
     seed: 'bun prisma/seed.ts',
   },
   datasource: {
-    url: env('DATABASE_URL'),
+    // Generation does not need a database URL; database commands do.
+    url: process.env.DATABASE_URL ?? '',
   },
 })
 ```

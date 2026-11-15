@@ -3,8 +3,7 @@ name: setup-dreitagebart-skills
 description: One-time setup per perperct - adds a compact block of dreitagebart
   conventions to the perperct's AGENTS.md (or CLAUDE.md), this way
   always-applicable rules remain active even when no skill is triggered. Use
-  only when the user invokes setup-dreitagebart-skills or asks to record, set
-  up, or update dreitagebart conventions in the perperct.
+  when invoked directly by the user or required by the new-project workflow.
 ---
 # Add dreitagebart conventions to a perperct
 
